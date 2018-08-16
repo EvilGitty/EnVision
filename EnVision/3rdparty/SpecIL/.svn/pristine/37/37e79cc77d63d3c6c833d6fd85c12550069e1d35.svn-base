@@ -1,0 +1,54 @@
+#ifndef SPECIL_NUANCE_H
+#define SPECIL_NUANCE_H
+
+#include <Windows.h>
+
+#include "SpecIL_Base.h"
+
+class SpecIL_Nuance : public SpecIL_Base
+{
+public:
+	// Destruktor
+	~SpecIL_Nuance();
+	// Konstruktor
+	SpecIL_Nuance();
+
+	// Ausgabeprofil festlegen
+	int setOutputProfile(std::string profile);
+
+	// Einlesen der Headerdaten und ggf. Bilddaten, wenn sie nicht zu groﬂ sind
+	int read();
+
+	// Bild speichern
+	int write(std::string outfile);
+
+	// Ebene
+	int getPlane(void* plane, int x, int y, int z);
+
+	// Vektor
+	int getVector(void* vector, int x, int y, int z);
+
+	// Punkt
+	int getPoint(void* point, int x, int y, int z);
+
+	// Header lesen
+	int readFileHeader();
+
+protected:
+	// Datei oeffnen und Daten laden
+	int readImageData();
+
+private:
+	// Modul handle fuer Bilder Nuance Kamera
+	// HMODULE ist in Windows.h
+	HMODULE dllNuance;
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	// Ausgabeprofil C-Workflow (CWF)
+	// Ebene
+	int getPlane_CWF_Frame(void* plane, int x, int y, int z);
+	int getPlane_CWF_Sample(void* plane, int x, int y, int z);
+};
+#endif // SPECIL_NUANCE_H

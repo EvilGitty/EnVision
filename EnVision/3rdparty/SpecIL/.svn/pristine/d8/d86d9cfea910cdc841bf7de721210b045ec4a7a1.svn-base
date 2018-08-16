@@ -1,0 +1,151 @@
+#ifndef SPECIL_BASE_H
+#define SPECIL_BASE_H
+
+#include "SpecIL_Interface.h"
+
+#include <string>
+#include <vector>
+#include <fstream>
+#include <sstream>
+
+class SpecIL_Base : public SpecIL_Interface
+{
+public:
+	// Destruktor
+	~SpecIL_Base();
+
+	// Konstruktor
+	SpecIL_Base();
+
+	// Pointer auf den Header
+	t_SpecHead* getHeaderPointer();
+
+	// formSpecImage
+	// Das Spec Image Objekt definieren
+	// Wenn ein Objekt mit creat erschaffen wurde, muss diese Methode aufgerufen werden.
+	// Dem Image wird erster Speicher bereit gestellt um Pixel, Frames oder Baender zu sichern.
+	// Wenn das Bild anwaechst, wird auf die Festplatte ausgelagert. -> temp Datei
+	// Die Daten werde NOCH NICHT fest gespeichert! Dafuer ist die write Methode da.
+	int formSpecImage(	const char* filename,					// zukuenftiger Speicherort
+																		// Hier wird ausgelagert. MUSS angegeben werden!
+								int width,								// Bild Breite -> RAW Profile: x - imgsize[0]
+								int height,								// Bild Hoehe -> RAW Profile: y - imgsize[2]
+								int depth,								// Bild Tiefe -> RAW Profile: z - imgsize[1]
+								t_SpecHead::t_data_type type,			// Datentyp
+								t_SpecHead::t_interleave interleave);	// Anordnung: bsq (Standard), bil, bip.
+
+	// Fileheader
+	int readFileHeader();
+
+	// Ausgabeprofil festlegen
+	int setOutputProfile(std::string profile);
+
+	// Eine ID setzen
+	// Kameraname oder aehnliches
+	int setID(const char* id);
+
+	// Bild/Daten-Eigenschaften setzen:
+	int setImageProperties(int width, int height, int depth, t_SpecHead::t_interleave il, t_SpecHead::t_data_type dt);
+
+	// Ebene
+	int getPlane(void* plane, int x, int y, int z);
+	int setPlane(void* plane, int x, int y, int z);
+	// Vektor
+	int getVector(void* vector, int x, int y, int z);
+	// Punkt
+	int getPoint(void* point, int x, int y, int z);
+
+	
+
+protected:
+	t_SpecHead SpecHeader;			// Header der Rohdaten -> wird in der Regel nicht veraendert
+	t_SpecHead SpecHaederProfile;	// Dieser Header kann verwendet werden,
+										// wenn Veränderungen im Header vorgenommen werden müssen,
+										// die durch das aktive Profil erforderlich sind.
+										// Bsp: Bei der Nuance muessen die Werte der Diemensionen x und y
+										// fuer den C-Workflow getauscht werden.
+										// Eine Arbeitskopie des Headers.
+	// ------------------------------------------------------------------------
+
+	// FLAGs
+	int FileHeaderLoaded;		//	Fileheader geladen?
+								//		0 - not loaded
+								//		1 - loaded
+	int FileDataLoaded;			//	Daten geoeffnet und versucht zu laden oder
+								//	in RAM vollstaendig geladen
+								//		0 - not loaded
+								//		1 - loaded
+	int OutputProfile;			//	Ausgabeprofil der Daten
+								//		0 - RAW (Standard)
+								//		1 - C-Workflow
+	int ManualImageProperties;	//	mit setImageProperties gesetze Werte haben prioritaet vor denen im Header!
+								//	Wenn setImageProperties genutzt wird, wird dieses Flag immer auf 1 gesetzt
+								//	und verbleibt so!
+	int ImageReadWriteType;		//	Datentyp im Bezug auf lesen,schreiben
+								//		0 - nur lesen (Standard bei geladenen Dateien)
+								//		1 - lesen und schreiben (Standard bei angelegten SpecIL Objekten durch
+								//			formSpecImage).
+	int UseWriteBuffer;			//	Um die I-O Operationen auf die HDD zu minimieren, wird ein max ~200MB Buffer
+								//	verwendet.
+								//		0 - Buffer nicht verwenden
+								//		1 - Buffer verwenden
+	// ------------------------------------------------------------------------
+	int cubemaxsize; // Maximale Groesse des Cubes im Arbeitsspeicher!
+
+	int CountPlanesInBuffer;
+
+	std::string FileTempData;	// Speicherort fuer die temporaeren Dateien
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+
+	// Error-Handling
+	void ErrorMsgLog(std::string errmsg);
+
+
+	// Initialisierung
+	// Das OutputProfil wird dabei wieder auf RAW gesetzt!
+	int init();
+
+
+	// Datei oeffnen und Bilddaten (wenn moeglich bei ausreichend RAM)
+	// einlesen
+	int readImageData();
+
+	// ENVI Header Datei ".hdr" einlesen 
+	// und Informationen in SpecIL_Base::SpecHeader speichern
+	int readENVIhdr();
+
+	//
+	int writeENVIhdr(std::string outhdrfile);
+
+	// Daten als HySpex Datei speichern
+	int writeDataToHySpexFile(std::string outHySpexFile);
+
+	// Daten als TGD Datei speichern
+	int writeDataToTGDfile(std::string outTGDfile);
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	// Ausgabeprofil RAW
+	// Ebenen
+	int getPlane_RAW_Band(void* plane, int x, int y, int z);
+	int setPlane_RAW_Band(void* plane, int x, int y, int z);
+	int getPlane_RAW_Frame(void* plane, int x, int y, int z);
+	int getPlane_RAW_Sample(void* plane, int x, int y, int z);
+	// Vektoren
+	int getVector_RAW_X(void* vector, int y, int z);
+	int getVector_RAW_Y(void* vector, int x, int z);
+	int getVector_RAW_Z(void* vector, int x, int y);
+	// Punkt
+	int getPoint_RAW(void* point, int x, int y, int z);
+	// ------------------------------------------------------------------------
+
+	// Ausgabeprofil C-Workflow (CWF)
+	// Ebene
+	int getPlane_CWF_Band(void* plane, int x, int y, int z);
+	// ------------------------------------------------------------------------
+};
+#endif // SpecIL_BASE_H

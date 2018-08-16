@@ -1,0 +1,269 @@
+/*************************************************************************
+ *   Description :
+ *
+ *
+ *   Date	Action
+ *   ----	------
+ *   08/02/07	Original Version
+ *
+ *________________________________________________________________________
+ *                       (c) Copyright 2007
+ *                 Cambridge Research & Instrumentation
+ *                       all rights reserved
+ *________________________________________________________________________
+ *
+ **************************************************************************/
+
+/*** DEFINES ***/
+
+#pragma once
+
+/*** INCLUDE FILES ***/
+
+/*** EXTERNAL VARIABLES ***/
+
+/*** CLASSES ***/
+
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+#ifdef CRIMSIFILEFORMATS_EXPORTS
+#define CRI_ARCHIVE_API __declspec(dllexport)
+#else
+#define CRI_ARCHIVE_API __declspec(dllimport)
+#endif
+
+typedef int cri_ArchiveHandle;
+typedef int cri_ErrorCode;
+
+// --------------------------------------------------------------
+// Archive functions
+// --------------------------------------------------------------
+
+CRI_ARCHIVE_API cri_ErrorCode
+cri_OpenReadArchive(char* fileName,cri_ArchiveHandle* handle);
+
+CRI_ARCHIVE_API cri_ErrorCode
+cri_CloseArchive(cri_ArchiveHandle handle);
+
+enum ECRIFileType {
+   cri_filetype_Unknown,
+   cri_filetype_Cube,
+   cri_filetype_Roi,
+   cri_filetype_SpectralLibrary,
+   cri_filetype_Last
+};
+
+enum ECRIPixelDataType{
+   cri_pixel_type_U_Int8,
+   cri_pixel_type_S_Int8,
+   cri_pixel_type_U_Int16,
+   cri_pixel_type_S_Int16,
+   cri_pixel_type_U_Int32,
+   cri_pixel_type_S_Int32,
+   cri_pixel_type_S_Float32,
+   cri_pixel_type_S_Float64
+};
+
+enum ECRIPixelUnit{
+   cri_pixel_unit_unknown,
+   cri_pixel_unit_raw,
+   cri_pixel_unit_normalized,
+   cri_pixel_unit_dark_corrected,
+   cri_pixel_unit_dark_optical_density
+};
+
+// return if this is a cube, spectral library, roi
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetArchiveType(cri_ArchiveHandle handle,int* type);
+
+// --------------------------------------------------------------
+// Cube Functions
+// --------------------------------------------------------------
+
+// If data is null, returns just the width,height,numChannels,pixelDataType
+// info. PixelDataType depends on the requested pixelUnit.
+// If *data is null, then allocates the memory.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...);
+// It may be safely deallocated on the client side with
+// HeapFree(GetProcessHeap(),...); 
+// If *data is not null, then data is a preallocated buffer
+// If *pixelDataType!=0 then convert the data to the given data type
+// If *pixelUnit!=cri_pixel_unit_unknown then try to convert to the requested
+// pixel unit. The actual pixel unit will be returned. Otherwise return
+// the pixels in the native format. You can check if the data is convertable by
+// setting data to null and the pixel unit to the desired unit.
+// *pixelUnit will change to the actual unit that would be returned.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeData(cri_ArchiveHandle handle,
+            void** data,
+            int* width,int* height,int* numChannels,
+            /* ECRIPixelDataType* */ int* pixelDataType,
+            /* ECRIPixelUnit* */ int* pixelUnit);
+
+
+// If wavelengths is null, just returns numWavelengths.
+// If *wavelengths is null, then allocates memory.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...);
+// It may be safely deallocated on the client side with
+// HeapFree(GetProcessHeap(),...); 
+// If *wavelengths is not null, then wavelengths is a preallocated buffer
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeWavelengths(cri_ArchiveHandle handle,
+                   float** wavelengths,
+                   int* numWavelengths);
+
+// Get the exposure time in micro seconds.
+// There is an exposure time for each
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeExposureTimeUS(cri_ArchiveHandle handle,
+                      float** exposureTimeUS,
+                      int* numExposureTimes);
+
+// Get the camera binning.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeBinning(cri_ArchiveHandle handle,
+               int* binningX,int* binningY);
+
+// Get the camera bit depth. Currently, this will be 8 or 12.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeCameraBitDepth(cri_ArchiveHandle handle,
+                      int* bitDepth);
+
+// Get the camera gain.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetCubeCameraGainAndOffset(cri_ArchiveHandle handle,
+                  int* gain,int* offset);
+
+// --------------------------------------------------------------
+// Spectral library
+// --------------------------------------------------------------
+
+// The following rules apply to both the magnitudes and wavelength
+// parameter. I will use "mOrL" to refer to either of these paramters:
+// If wOrL is null, wOrL is not retrieved.
+// If *wOrL is null, then allocates the memory.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...);
+// It may be safely deallocated on the client side with
+// HeapFree(GetProcessHeap(),...); 
+// If *wOrLis not null, then data is put into this preallocated buffer.
+// If *pixelUnit!=cri_pixel_unit_unknown then try to convert to the requested
+// pixel unit. The actual pixel unit will be returned. Otherwise return
+// the pixels in the native format. You can check if the data is convertable
+// by settin wavelengths and magnitudes to null and set the pixel unit to
+// the desired unit. *pixelUnit will change to the actual unit that would
+// be returned.
+// There are numSpectra*numWavelengths values in the *magnitudes parameter.
+// The nth spectra starts at n*numWavelengths.
+// There are numWavelengths values in the *wavelengths parameter.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetSpectra(cri_ArchiveHandle handle,
+           float** magnitudes,
+           float** wavelengths,
+           int* numSpectra,
+           int* numWavelengths,
+           /* ECRIPixelUnit* */ int* pixelUnit);
+
+// --------------------------------------------------------------
+// Region Of Interest
+// --------------------------------------------------------------
+
+struct cri_Mask
+{
+   int UpperLeftX;
+   int UpperLeftY;
+   int Width;
+   int Height;
+   unsigned char* Mask;
+};
+
+// If masks is null, do not retrieve this parameter.
+// If *masks is null, the routine will allocate the memory.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...);
+// It may be safely deallocated on the client side with
+// HeapFree(GetProcessHeap(),...); 
+// If *masks is not null, then this is a preallocated buffer of size *numROIS
+// and at most *numROIS will be retrieved.
+// The mask slot in the cri_Mask struct is always allocated by this routine.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetMasks(cri_ArchiveHandle handle,
+         cri_Mask** masks,
+         int* numROIS);
+
+// If labelImage is null, do not retrieve the parameter
+// If *labelImage is not null, the image is preallocated with the dims
+// passed in through width and height.
+// A pixel in a label image shows what mask that pixel belongs to.
+// Label zero is the background.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetMasksAsLabelImage(cri_ArchiveHandle handle,
+                     unsigned int** labelImage,
+                     int* width,int* height);
+
+// --------------------------------------------------------------
+// Result Set
+// --------------------------------------------------------------
+
+// If component is null, do not retrieve the parameter
+// If *component is null, the routine will allocate the memory.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...);
+// It may be safely deallocated on the client side with
+// HeapFree(GetProcessHeap(),...); 
+// If *pixelUnit!=cri_pixel_unit_unknown then try to convert to the requested
+// pixel unit. The actual pixel unit will be returned. Otherwise return
+// the pixels in the native format. You can check if the data is convertable
+// by settin wavelengths and magnitudes to null and set the pixel unit to
+// the desired unit. *pixelUnit will change to the actual unit that would
+// be returned.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetComponentImages(cri_ArchiveHandle handle,
+                   float** component,
+                   int* width,int* height,
+                   int componentIndex,
+                   int* numComponents,
+                   /* ECRIPixelUnit* */ int* pixelUnit);
+
+
+// user is responsible to allocating the string and will pass in the pointer to the string 
+// and the number of characters allocated. We will copy into that string with a null termination. 
+// return an error code if not enough memory is allocated. 
+// If the user passes a null pointer, "return" the amount of memory to allocate through the buffersize parameter.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetErrorDescription(cri_ErrorCode code,
+					char* buffer,
+					int* bufferSize);
+
+// Deallocating the memory that was previously was allocated
+CRI_ARCHIVE_API cri_ErrorCode
+cri_DeallocateMemory(cri_ArchiveHandle handle,
+					void* buffer);
+
+// If thumbnail is null, do not retrieve this parameter.
+// If *thumbnail is null, the routine will allocate the memory.
+// If this function returns a width or height of zero, then the archive 
+// does not contain a thumbnail for this image.
+// Memory will be allocated with HeapAlloc(GetProcessHeap(),...); 
+// It may be safely deallocated on the client side with 
+// HeapFree(GetProcessHeap(),...); 
+CRI_ARCHIVE_API cri_ErrorCode 
+cri_GetThumbnail(cri_ArchiveHandle handle,
+             unsigned char** thumbnail,
+             int* width,int* height);
+
+
+// user is responsible to allocating the string and will pass in the pointer to the string 
+// and the number of characters allocated. We will copy into that string with a null termination. 
+// return an error code if not enough memory is allocated. 
+// If the user passes a null pointer, "return" the amount of memory to allocate through the buffersize parameter.
+CRI_ARCHIVE_API cri_ErrorCode
+cri_GetSampleIDAndUserComments(cri_ArchiveHandle handle,
+					char* sampleIDBuffer,
+					int* sampleIDBufferSize,
+					char* userCommentsBuffer,
+					int* userCommentsBufferSize);
+
+
+#ifdef __cplusplus
+}; // extern "C"
+#endif

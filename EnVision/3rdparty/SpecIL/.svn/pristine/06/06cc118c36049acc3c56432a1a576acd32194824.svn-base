@@ -1,0 +1,264 @@
+#ifndef SPECIL_INTERFACE_H
+#define SPECIL_INTERFACE_H
+
+#include <string>
+#include <vector>
+
+// Minimum Header
+struct t_SpecHead
+{
+	std::string filename;				//	Filename des Bildes (fuer type=2)
+	int type;							//	Type des Bildes
+										//		type = 0   - undefiniert
+										//		type = 1   - cube geladen
+										//		type = 2   - cube nicht geladen
+										//			(auf Festplatte halten,
+										//			wegen Speicherplatz)
+	void * imgcube;						//	Datacube (fuer type=1)
+	std::string ID;						//	ENVI Feld unter description: ID 
+	std::string wavelenunit;			// 
+	std::vector <float> wavelen;		//	Wellenlaengen
+	std::vector <float> exposureTimeUS;	//	Belichtung
+	unsigned int headsize;				//	header size der eingelesenen Datei
+	int outheadsize;					//	Headergroesse der mit write() geschreibenen Dateien
+	unsigned int numdim;				//	Anzahl der Dimensionen
+	unsigned long long imgsize[3];		//	Bildgroesse:
+										//	 Achtung! Diese Anordnung ist jedoch keine Aussage,
+										//	 wie die Daten im Speicher liegen! -> interleave
+										//		Profile: RAW und C-Workflow 
+										//			[0] - spatial (samples) (x)
+										//			[1] - spectral	(bands)	(z)
+										//			[2] - frame (lines)		(y)
+	enum t_interleave {					//	interleave:
+										//	 Achtung! So liegen die Daten in der Datei UND
+										//	 auch im geladenen Zustand im Speicher (type = 1) ! 
+		IL_UNKNOWN,						//		Unbekannt
+		IL_BSQ,							//		BSQ - band sequential
+		IL_BIP,							//		BIP - band interleaved by pixel
+		IL_BIL							//		BIL - band interleaved by line
+	} interleave;						//
+	unsigned int  bitdepth;				//	Bit Tiefe (Wie viele Bits von allen wirklich genutzt werden.
+										//		Hauptsaechlich fuer .tgd Dateien. Diese sind immer
+										//		4 Byte gross, aber nutzen nicht alle Bits.
+										//
+	enum t_data_type {					//	ENVI Datentyp
+		DT_UNKNOWN		=	0,			//		Unbekannt
+		DT_8_BYTE		=	1,			//		1 Byte
+		DT_16_SINT		=	2,			//		2 Byte Integer
+		DT_32_SLONG		=	3,			//		4 Byte Integer
+		DT_32_FLOAT		=	4,			//		4 Byte Float
+		DT_64_DOUBLE	=	5,			//		8 Byte Float (Double)
+		DT_2x32_COMPLEX	=	6,			//	2x	4 Byte Komplex	
+		DT_2x64_COMPLEX	=	9,			//	2x	8 Byte Komplex
+		DT_16_UINT		=	12,			//		2 Byte Unsigned Integer
+		DT_32_ULONG		=	13,			//		4 Byte Unsigned Integer
+		DT_64_SLONG		=	14,			//		8 Byte Integer
+		DT_64_ULONG		=	15			//		8 Byte Unsigned Integer
+	} data_type;
+	std::string data_type_str;			//	Den Datentyp als Namen! fuer evtl. Unterscheidungen
+										//	bei z.B. Tapsansi:
+										//		byte, bool, char, uchar, short, ushort, int, uint,
+										//		long, ulong, float, double
+	enum{								//	Byte Order
+		BO_UNKNOWN	=	-1,				//
+		BO_LSF		=	0,				//		least significant byte (Little-endian)
+		BO_MSF		=	1				//		most significant byte (Big-endian)
+	} byte_order;
+	unsigned long long pixelsize;		// Pixelgroesse in Byte
+	double maxval;						//
+};
+
+// Spectral Image Loader Interface Class
+class SpecIL_Interface
+{
+public:
+	// (durch static wie eine globale Funktion zu sehen
+	// und verletzt damit eigentlich nicht die Definition eines Interfaces)
+	// ------------------------------------------------------------------------
+
+	// Destruktor
+	virtual ~SpecIL_Interface(){};
+	//	virtual ~SpecIL_Interface()=0; // Geht so nicht! Warum?
+
+
+	// Datei oeffnen:
+	//	Diese Funktion verwenden um ein Objekt zu erzeugen, das mit einer bestehenden Datei genutzt werden soll.
+	//	Das Standard Profil ist immer RAW.
+	// Unterstuetzte Formate:
+	//	HySpex:		.img und .bin	mit BSQ, BIL, BIP
+	//	Nuance:		.im3
+	//	TapSansi:	.tgd			mit BSQ, BIL, BIP
+	//
+	// return false if file-format is not supported
+	static SpecIL_Interface* open(const char* cstr_filename);
+
+
+	// lesen der Datei und des Headers, ggf. zusätzlich aus einer extra Header Datei
+	virtual int read() = 0;
+
+
+	// Ein neues Objekt erstellen
+	// to do...
+
+
+	// schreiben (noch nicht zum verwenden!)
+	virtual int write(std::string outfile) = 0;
+
+
+	// Objekt schließen
+	// to do...
+
+	// ------------------------------------------------------------------------
+	// SET METHODEN: Eigenschaften
+
+	// Arbeitsprofil festlegen
+	//	"Standard"	- (Standard, wird im Konstruktur gesetzt!)
+	//	"CWorkflow"	- C-Workflow
+	// (Diese Methode ist ein Automat und bestimmt, wie sich die Instanz nach aussen verhaelt.)
+	virtual int setProfile(std::string profile)=0;
+
+
+	// Bild/Daten-Eigenschaften setzen:
+	//	Manuelles setzen von Eigenschaften, wenn diese nicht vorhaneden sind. Diese Informationen werden in den
+	//	SpecHeader gespeichert.
+	//	Aufloesung der Dimensionen:	
+	//		width - x - Samples
+	//		height - y - Frames
+	//		depth - z - Bands
+	//			=> Weitere Dimensionen koennten ergaenzt werden. Noch NICHT implementiert!
+	//	il		- Interleave, Anordnung der Daten in der Dateil: bsq, bil, bip (siehe t_SpecHead::t_interleave)
+	//	dt		- Datentyp nach ENVI Formatierung, siehe t_SpecHead::t_data_type 
+	virtual int setImageProperties(	const char* id,
+									int width,
+									int height,
+									int planes,
+									t_SpecHead::t_interleave il,
+									t_SpecHead::t_data_type dt
+									) = 0;
+
+
+	// Cube nicht in den RAM laden
+	virtual int setReadOnlyFromHDD()=0;
+
+	// ------------------------------------------------------------------------
+	// GET METHODEN: Eigenschaften
+
+	// Pointer auf den Header
+	virtual t_SpecHead* getHeaderPointer()=0;
+
+
+	// ------------------------------------------------------------------------
+	// GET METHODEN: Daten
+
+	// Profil: Standard
+	//	Definition des ImgCubes:
+	//
+	//		     /\ z = imgsize[1] => spectral (bands)
+	//		     /
+	//		    /
+	//		   /
+	//	    0 .--------------> x = imgsize[0] => spatial (samples)
+	//		  |
+	//		  |
+	//		  |
+	//		  |
+	//		  V y = imgsize[2] => frame (lines)
+	//
+	// Profil: C-Workflow
+	//	Definition des ImgCubes:
+	//
+	//		     /\ z = imgsize[1] => spectral (bands)
+	//		     /
+	//		    /
+	//		   /
+	//	    0 .--------------> y = imgsize[2] => frame (lines)
+	//		  |
+	//		  |
+	//		  |
+	//		  |
+	//		  V x = imgsize[0] => spatial (samples)
+	// ------------------------------------------------------------------------
+
+	// Ebene anfordern
+	// Speicher muss bereitgestellt sein!
+	// -> Speicherverwaltung obligt dem Anwender!!!!
+	// Es sind nur positive Koordinaten zulaessig!
+	// Mit eine Koordinate = -1 wird die gewuenschte Ebenenrichtung angegeben, Bsp:
+	// Fuer die z-Richtung und damit x-y Ebene: x=-1 und y=-1
+	// Mit z wird dann die Ebene in z-Richtung gewaehlt
+	// void* plane muss extern freigegeben werden! SpecIL macht das nicht!
+	//
+	// Ausgegeben Koordinatensysteme:
+	// Profil Standard
+		// Ebene: Band
+		// 0 .--------------> x = imgsize[0] => spatial (samples)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V y = imgsize[2] => frame (lines)
+		// Ebene: Frame
+		// 0 .--------------> x = imgsize[0] => spatial (samples)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V z = imgsize[1] => spectral (bands)
+		// Ebene: Samples
+		// 0 .--------------> z = imgsize[1] => spectral (bands)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V y = imgsize[2] => frame (lines)
+	// Profil C-Workflow
+		// Ebene: Band
+		// 0 .--------------> y = imgsize[2] => frame (lines)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V x = imgsize[0] => spatial (samples)
+		// Ebene: Frame
+		// 0 .--------------> x = imgsize[0] => spatial (samples)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V z = imgsize[1] => spectral (bands)
+		// Ebene: Samples
+		// 0 .--------------> z = imgsize[1] => spectral (bands)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V y = imgsize[2] => frame (lines)
+
+	virtual int getPlane(void* plane, int x, int y, int z)=0;
+
+
+	// Vektor anfordern
+	// Speicher muss bereitgestellt sein!
+	// -> Speicherverwaltung obligt dem Anwender!!!!
+	// Es sind nur positive Koordinaten zulaessig!
+	// Mit eine Koordinate = -1 wird die gewuenschte Vektorrichtung angegeben, Bsp:
+	// Fuer einen Vektor in z-Richtung wird z=-1 gesetzt
+	// x und y bestimmen dann den Vektor
+	virtual int getVector(void* vector, int x, int y, int z)=0;
+
+
+	// Punkt anfordern
+	// Speicher muss bereitgestellt sein!
+	// -> Speicherverwaltung obligt dem Anwender!!!!
+	// Mit alles drei Variablen wird die Koordinate im Bildraum angegeben
+	virtual int getPoint(void* point, int x, int y, int z)=0;
+
+
+	// ------------------------------------------------------------------------
+	// SET METHODEN: Daten
+
+	// Ebene ueberschreiben
+	virtual int setPlane(void* plane, int x, int y, int z)=0;
+
+};
+#endif // SPECIL_INTERFACE_H

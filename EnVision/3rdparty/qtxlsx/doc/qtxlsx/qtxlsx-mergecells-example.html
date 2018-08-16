@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- mergecells.qdoc -->
+  <title>Merge Cells Example | Qt 0.3 </title>
+  <link rel="stylesheet" type="text/css" href="style/offline.css" />
+</head>
+<body>
+<div class="header" id="qtdocheader">
+    <div class="main">
+    <div class="main-rounded">
+        <div class="navigationbar">
+        <ul>
+<li>Qt 0.3</li>
+<li>Merge Cells Example</li>
+<li id="buildversion">Qt 0.3.0 Reference Documentation</li>
+    </ul>
+    </div>
+</div>
+<div class="content">
+<div class="line">
+<div class="content mainContent">
+<div class="sidebar"><div class="sidebar-content" id="sidebar-content"></div></div>
+<h1 class="title">Merge Cells Example</h1>
+<span class="subtitle"></span>
+<!-- $$$mergecells-description -->
+<div class="descr"> <a name="details"></a>
+<p>This example demonstrates how to generate a simplest .xlsx file which contians merged cells with Qt Xlsx Library.</p>
+<p class="centerAlign"><img src="images/xlsx-mergecells.png" alt="" /></p><p>Create an format which will be applied to the merged cells:</p>
+<pre class="cpp">Format format;
+format<span class="operator">.</span>setHorizontalAlignment(Format<span class="operator">::</span>AlignHCenter);
+format<span class="operator">.</span>setVerticalAlignment(Format<span class="operator">::</span>AlignVCenter);</pre>
+<p>Merge cells.</p>
+<pre class="cpp">xlsx<span class="operator">.</span>write(<span class="string">&quot;B4&quot;</span><span class="operator">,</span> <span class="string">&quot;Hello Qt!&quot;</span>);
+xlsx<span class="operator">.</span>mergeCells(<span class="string">&quot;B4:F6&quot;</span><span class="operator">,</span> format);
+xlsx<span class="operator">.</span>write(<span class="string">&quot;B8&quot;</span><span class="operator">,</span> <span class="number">1</span>);
+xlsx<span class="operator">.</span>mergeCells(<span class="string">&quot;B8:C21&quot;</span><span class="operator">,</span> format);
+xlsx<span class="operator">.</span>write(<span class="string">&quot;E8&quot;</span><span class="operator">,</span> <span class="number">2</span>);
+xlsx<span class="operator">.</span>mergeCells(<span class="string">&quot;E8:F21&quot;</span><span class="operator">,</span> format);</pre>
+<p>Files:</p>
+<ul>
+<li><a href="qtxlsx-mergecells-main-cpp.html">mergecells/main.cpp</a></li>
+<li><a href="qtxlsx-mergecells-mergecells-pro.html">mergecells/mergecells.pro</a></li>
+</ul>
+</div>
+<!-- @@@mergecells -->
+        </div>
+       </div>
+   </div>
+   </div>
+</div>
+<div class="footer">
+        <div class="qt13a-copyright" id="copyright">
+            <div class="qt13a-container">
+            <p>
+              <acronym title="Copyright">&copy;</acronym> 2013-2014 Debao Zhang. 
+              Documentation contributions included herein are the copyrights of
+              their respective owners.</p>
+            <p>
+              The documentation provided herein is licensed under the terms of the
+              <a href="http://www.gnu.org/licenses/fdl.html">GNU Free Documentation
+              License version 1.3</a> as published by the Free Software Foundation.</p>
+            <p>
+              Documentation sources may be obtained from <a href="https://github.com/dbzhang800/QtXlsxWriter">
+              github.com/dbzhang800</a>.</p>
+            <p>
+              Qt and their respective logos are trademarks of Digia Plc 
+              in Finland and/or other countries worldwide. All other trademarks are property
+              of their respective owners. <a title="Privacy Policy"
+              href="http://en.gitorious.org/privacy_policy/">Privacy Policy</a></p>
+            </div>
+        </div>
+</div>
+</body>
+</html>

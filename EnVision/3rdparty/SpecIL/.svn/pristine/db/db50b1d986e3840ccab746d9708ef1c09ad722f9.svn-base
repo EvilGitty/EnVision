@@ -1,0 +1,267 @@
+#include "SpecIL_HySpex.h"
+
+SpecIL_HySpex::~SpecIL_HySpex()
+{
+//	this->CleanMemory();
+};
+//
+SpecIL_HySpex::SpecIL_HySpex()
+{
+//	this->init();
+};
+//
+int SpecIL_HySpex::read()
+{
+	// Datei oeffnen testen
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in|std::ifstream::binary);
+	if(ifs.is_open() == false)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_HySpex::read():Konte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		ifs.close();
+		return -1;
+	};
+	ifs.close();
+
+	// Fileheader einlesen
+	if(this->FileHeaderLoaded == 0)
+	{
+		this->readFileHeader();
+		/*if(this->readFileHeader() != 0)
+		{
+			// Der genaue Error wird schon in readFileHeader in die Log Datei geschrieben
+			return -1;
+		};*/
+	};
+
+	// ENVI Header Datei ".hdr" einlesen
+	this->readENVIhdr();
+
+	this->setDataTypeMaxMin();
+
+/*	// ENVI Header Datei ".hdr" einlesen
+	if(this->readENVIhdr() != 0)
+	{
+		// Der genaue Error wird schon in readENVIhdr in die Log Datei geschrieben
+		return -1;
+	};*/
+
+	// Bilddaten oeffnen und lesen
+	if(this->FileDataLoaded == 0)
+	{
+		if(this->readImageData() != 0)
+		{
+			return -1;
+		};
+	};
+
+	/*// Profil laden...
+	if (this->OutputProfile != 0)
+	{
+		this->loadProfile();
+	};*/
+
+	return 0;
+};
+//
+int SpecIL_HySpex::readFileHeader()
+{
+	// Datei oeffnen
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in|std::ifstream::binary);
+	if(ifs.is_open() == false)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_HySpex::readFileHeader(): Konte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		ifs.close();
+		return -1;
+	};
+	// Prüfen, ob es eine HySpex Datei ist
+	char buffer8[8];
+	ifs.read(buffer8, 8);
+	char checkbuffer[] = {'H', 'Y', 'S', 'P', 'E', 'X', 0x00, 0x00};
+
+	if(*buffer8 == *checkbuffer)
+	{
+		// Ist HySpex
+		this->SpecHeader.ID = "HySpex";
+
+		// Headergroesse MUSS vorhanden sein!
+		// Headergroesse
+		this->SpecHeader.headsize = 0;
+		char buffer4[4];
+		ifs.read(buffer4, sizeof(buffer4));
+		unsigned int size;
+		((char*) &size)[0] = buffer4[0];
+		((char*) &size)[1] = buffer4[1];
+		((char*) &size)[2] = buffer4[2];
+		((char*) &size)[3] = buffer4[3];
+		this->SpecHeader.headsize = size;
+
+		if(this->SpecHeader.headsize > 1961)
+		{
+			// Anzahl der Kanaele
+			//int ifspos1 = ifs.tellg();
+			ifs.seekg(1961); //ifspos1 + 1949
+			ifs.read(buffer4, sizeof(buffer4));
+			unsigned int spectralchannels;
+			((char*) &spectralchannels)[0] = buffer4[0];
+			((char*) &spectralchannels)[1] = buffer4[1];
+			((char*) &spectralchannels)[2] = buffer4[2];
+			((char*) &spectralchannels)[3] = buffer4[3];
+
+			this->SpecHeader.imgsize[1] = spectralchannels;
+
+
+			if(this->SpecHeader.headsize > 1965)
+			{
+				// Raeumliche Aufloesung
+				// 1965 -> kein seekg noetig
+				ifs.read(buffer4, sizeof(buffer4));
+				unsigned int spatialpixels;
+				((char*) &spatialpixels)[0] = buffer4[0];
+				((char*) &spatialpixels)[1] = buffer4[1];
+				((char*) &spatialpixels)[2] = buffer4[2];
+				((char*) &spatialpixels)[3] = buffer4[3];
+
+				this->SpecHeader.imgsize[0] = spatialpixels;
+
+
+				if(this->SpecHeader.headsize > 2073)
+				{
+					// Aufnahmenummer (frame)
+					//int ifspos2 = ifs.tellg();
+					ifs.seekg(2073); //ifspos2 + 4*26
+					ifs.read(buffer4, sizeof(buffer4));
+					unsigned int framenumber;
+					((char*) &framenumber)[0] = buffer4[0];
+					((char*) &framenumber)[1] = buffer4[1];
+					((char*) &framenumber)[2] = buffer4[2];
+					((char*) &framenumber)[3] = buffer4[3];
+
+					this->SpecHeader.imgsize[2] = framenumber;
+
+
+					// Wellenlaengen drin?
+					if(this->SpecHeader.headsize > 2181)
+					{
+						ifs.seekg(2181); // 2169 + 12
+						int bufferwavelensize = 8 * spectralchannels; // 8 Byte pro Wert
+						char* bufferwavelen = new char[bufferwavelensize];
+						ifs.read(bufferwavelen, bufferwavelensize);
+						// vom buffer in den Vektor
+						double wavelength = 0;
+						for(int i = 0; i < bufferwavelensize; i = i + 8)
+						{
+							((char*) &wavelength)[0] = bufferwavelen[i + 0];
+							((char*) &wavelength)[1] = bufferwavelen[i + 1];
+							((char*) &wavelength)[2] = bufferwavelen[i + 2];
+							((char*) &wavelength)[3] = bufferwavelen[i + 3];
+							((char*) &wavelength)[4] = bufferwavelen[i + 4];
+							((char*) &wavelength)[5] = bufferwavelen[i + 5];
+							((char*) &wavelength)[6] = bufferwavelen[i + 6];
+							((char*) &wavelength)[7] = bufferwavelen[i + 7];
+
+							this->SpecHeader.wavelen.push_back( (float) wavelength);
+						};
+						delete( bufferwavelen );
+					};
+				};
+			};
+		};
+	}
+	else
+	{
+		std::string emsg;
+		emsg = "Warning in SpecIL_HySpex::readFileHeader(): In File " + this->SpecHeader.filename + " is no HYSPEX keyword.";
+		this->ErrorMsgLog(emsg);
+		ifs.close();
+	};
+
+	this->FileHeaderLoaded = 1;
+
+	ifs.close();
+	return 0;
+};
+//
+int SpecIL_HySpex::readImageData()
+{
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in|std::ifstream::binary);
+	if(ifs.is_open() == false)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_HySpex::readImageData: Konnte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		ifs.close();
+		return -1;
+	};
+
+	if(this->FileDataLoaded == 0)
+	{
+		// Groesse der Datei ermitteln
+		ifs.seekg(0, ifs.end);
+		int filesize = ifs.tellg();
+		ifs.seekg(0, ifs.beg);
+
+		// bis ca 1GB erlaubt, dann auf Datei arbeiten!
+		// Das muss hier noch huebscher geregelt werden
+		if (((filesize - this->SpecHeader.headsize) < this->cubemaxsize) && this->ReadOnlyFromHDD == 0)
+		{
+			// Buffergroesse bestimmen
+			unsigned long long imagedatesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2];
+
+			// Buffer allokieren
+			try{
+				this->SpecHeader.imgcube = static_cast<void*>(	new char[imagedatesize]	);
+			}
+			catch(const std::bad_alloc&)
+			{
+				ifs.close();
+				this->ErrorMsgLog(std::string("In SpecIL_HySpex::readImageData(): Datei zu groß fuer Speicher -> std::bad_alloc"));
+
+				this->SpecHeader.imgcube = NULL;
+				this->SpecHeader.type = 2;
+
+				return -1;
+			};
+			// Vom Filestream in der Buffer schreiben
+			ifs.seekg( this->SpecHeader.headsize, ifs.beg );
+			ifs.read( static_cast< char* >( this->SpecHeader.imgcube ), imagedatesize );
+			
+			// Check Failbits
+			if(ifs.eof())
+			{
+				this->ErrorMsgLog(std::string("In SpecIL_HySpex::readImageData(): ifs.eof() == true ! -> End-of-File reached on input operation"));
+				ifs.close();
+				delete[] this->SpecHeader.imgcube;
+				return -1;
+			};
+			if(ifs.bad())
+			{
+				this->ErrorMsgLog(std::string("In SpecIL_HySpex::readImageData(): ifs.bad() == true ! -> Read-writing error on i-o operation or Logical error on i-o operation !"));
+				ifs.close();
+				delete[] this->SpecHeader.imgcube;
+				return -1;
+			};
+
+			// Bilddaten nun geladen
+			this->SpecHeader.type = 1;
+		}
+		else
+		{
+			// Bilddaten nicht in den Speicher geladen
+			this->SpecHeader.imgcube = NULL;
+			this->SpecHeader.type = 2;
+		};
+		ifs.close();
+		this->FileDataLoaded = 1;
+		return 0;
+	};
+
+	std::string emsg;
+	emsg = "In SpecIL_HySpex::readImageData: Konnte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+	this->ErrorMsgLog(emsg);
+	ifs.close();
+	return -1;
+};

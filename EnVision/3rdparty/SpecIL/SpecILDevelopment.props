@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<IFFLIBRARYPATH>C:\Library32</IFFLIBRARYPATH>
+		<SPECILPATH>$(SolutionDir)SpecIL</SPECILPATH>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<IFFLIBRARYPATH>C:\Library32</IFFLIBRARYPATH>
+		<SPECILPATH>$(SolutionDir)SpecIL</SPECILPATH>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<IFFLIBRARYPATH>C:\Library64</IFFLIBRARYPATH>
+		<SPECILPATH>$(SolutionDir)SpecIL</SPECILPATH>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<IFFLIBRARYPATH>C:\Library64</IFFLIBRARYPATH>
+		<SPECILPATH>$(SolutionDir)SpecIL</SPECILPATH>
+	</PropertyGroup>
+	
+	<ImportGroup Label="PropertySheets">
+		<Import Project="NuanceDLL.props" />
+		<Import Project="libtiff-4.0.6.props" />
+		<Import Project="hdf5-1.8.17.props" />
+		<Import Project="matio_1.5.9.props" />
+	</ImportGroup>
+	
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+		<ClCompile>
+			<AdditionalIncludeDirectories>$(SPECILPATH)\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+			<AdditionalDependencies>SpecIL.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	
+	<ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+		<ClCompile>
+			<AdditionalIncludeDirectories>$(SPECILPATH)\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+			<AdditionalDependencies>SpecIL.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+		<ClCompile>
+			<AdditionalIncludeDirectories>$(SPECILPATH)\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+			<AdditionalDependencies>SpecIL.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>
+	
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<ClCompile>
+			<AdditionalIncludeDirectories>$(SPECILPATH)\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+		</ClCompile>
+		<Link>
+			<AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+			<AdditionalDependencies>SpecIL.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+		</Link>
+	</ItemDefinitionGroup>	
+</Project>

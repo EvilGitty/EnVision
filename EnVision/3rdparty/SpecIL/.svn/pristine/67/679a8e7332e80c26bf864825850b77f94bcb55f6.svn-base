@@ -1,0 +1,64 @@
+#ifndef SPECIL_TGD_H
+#define SPECIL_TGD_H
+
+#include "SpecIL_Base.h"
+#include <string>
+#include <vector>
+
+class SpecIL_TGD : public SpecIL_Base
+{
+public:
+	// Destruktor
+	~SpecIL_TGD();
+	// Konstruktor
+	SpecIL_TGD();
+
+	// Einlesen der Headerdaten und ggf. Bilddaten, wenn sie nicht zu groß sind
+	int read();
+
+	// Bild speichern
+	int write(std::string outfile);
+
+	// Headerdaten aus der Datei lesen
+	int readFileHeader();
+
+	// Ausgabeprofil festlegen
+	int setOutputProfile(std::string profile);
+
+	// Bild/Daten-Eigenschaften setzen:
+	int setImageProperties(int width, int height, int depth, t_SpecHead::t_interleave il, t_SpecHead::t_data_type dt);
+
+protected:
+	// FLAGs	
+	int MetaFileLoaded;	// Meta-File gelesen?
+						//		0 - Nein, bzw kein Meta-File vorhanden
+						//		1 - Ja. -> Meta-File hat prioritaet gegenueber
+						//					den Fileheader Informationen
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	// Datei oeffnen und Daten laden
+	int readImageData();
+
+	// TGD Meta-File einlesen '.tgd.meta'
+	int readMetaFile(std::string metafilename);
+
+private:
+	// TGB Header (Aus der Datendatei!)
+	int dimensions;
+	unsigned long long dims[4];	// Dimensionen und ihre Ausdehnungen
+	unsigned int datatype;		// Datentyp
+	unsigned int headersize;	// Dateiheadergroesse
+
+	// TGB Header (Vom meta-File ausgelesen!)
+	std::string camera;		// Kamera
+	std::string cameraname;	// Kameraname
+	std::string sensor;		// Sensor
+	unsigned int  bitdepth;	// Bittiefe: Anzahl der verwendeten Bits im 4Byte Block
+									// Aufloesung:
+	unsigned long long sensorheight;	//	Hoehe
+	unsigned long long sensorwidth;		//	Breite
+	unsigned long long planes;			//	Ebenen, Bildkanaele, 3. Dimension
+	std::vector <float> wavelen;		//	Wellenlaengen
+};
+#endif // SPECIL_TGD_H

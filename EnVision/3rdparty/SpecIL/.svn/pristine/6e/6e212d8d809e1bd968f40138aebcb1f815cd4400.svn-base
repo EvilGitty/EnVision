@@ -1,0 +1,806 @@
+#include "SpecIL_Nuance.h"
+#include "include/CriMsiFileFormats.h"
+
+SpecIL_Nuance::~SpecIL_Nuance()
+{
+};
+//
+SpecIL_Nuance::SpecIL_Nuance()
+{
+	this->SpecHeader.ID = "Nuance CRI";
+};
+//
+int SpecIL_Nuance::setOutputProfile(std::string profile)
+{
+	// resetten...
+	this->SpecHaederProfile = this->SpecHeader;
+	this->OutputProfile = 0;
+
+	// Startzustand: RAW Profil
+
+	if(profile.compare("CWorkflow") == 0) // neuer Zustand
+	{
+		this->OutputProfile = 1;
+		// tauschen:
+		this->SpecHaederProfile.imgsize[0] = this->SpecHeader.imgsize[2];
+		this->SpecHaederProfile.imgsize[2] = this->SpecHeader.imgsize[0];
+
+		return 0;
+	};
+
+	//Err
+	this->ErrorMsgLog("In SpecIL_Nuance::setOutputProfile(): invalid string parameter in profile");
+	return -1;
+};
+//
+int SpecIL_Nuance::read()
+{
+	// Datei oeffnen testen
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in|std::ifstream::binary);
+	if(ifs.is_open() == false)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_Nuance::read():Konte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		ifs.close();
+		return -1;
+	};
+	ifs.close();
+
+	// Fileheader einlesen
+	if(this->FileHeaderLoaded == 0)
+	{
+		if(this->readFileHeader() != 0)
+		{
+			// Der genaue Error wird schon in readFileHeader in die Log Datei geschrieben
+			return -1;
+		};
+	};
+
+	// Bilddaten oeffnen und lesen
+	if(this->FileDataLoaded == 0)
+	{
+		if(this->readImageData() != 0)
+		{
+			return -1;
+		};
+	};
+
+	// Falls schon ein Profil gesetzt wurden
+	if(this->OutputProfile == 0)
+	{
+		this->setOutputProfile("RAW");
+	};
+
+	if(this->OutputProfile == 1)
+	{
+		this->setOutputProfile("CWorkflow");
+	};
+
+	return 0;
+};
+//
+int SpecIL_Nuance::readFileHeader()
+{	
+	// Abhaengige dll muessen vorhanden sein!
+	// "msvcp71d.dll", "msvcr71d.dll"
+
+	// dllNuance = LoadLibraryA("msvcp71d.dll");
+	// DWORD WINAPI lasterr = GetLastError();
+	// dllNuance = LoadLibraryA("msvcr71d.dll");
+	// lasterr = GetLastError();
+	
+	// ----
+	// Funktionzeigertypen und Funktionszeiger definieren
+	// Archiv oeffnen
+	typedef cri_ErrorCode	(*t_cri_OpenReadArchive)		(char*,cri_ArchiveHandle*);
+	t_cri_OpenReadArchive  fp_cri_OpenReadArchive;
+	// Wellenlaengen holen
+	typedef cri_ErrorCode	(*t_cri_GetCubeWavelengths)	(cri_ArchiveHandle,float**,int*);
+	t_cri_GetCubeWavelengths fp_cri_GetCubeWavelengths;
+	// Integrationszeiten holen
+	typedef cri_ErrorCode (*t_cri_GetCubeExposureTimeUS) (cri_ArchiveHandle,float**,int*);
+	t_cri_GetCubeExposureTimeUS fp_cri_GetCubeExposureTimeUS;
+	// Data Cube holen
+	typedef cri_ErrorCode (*t_cri_GetCubeData) (cri_ArchiveHandle,void**,int*,int*,int*,int*,int*);
+	t_cri_GetCubeData fp_cri_GetCubeData;
+	// Archiv schliessen
+	typedef cri_ErrorCode (*t_cri_CloseArchive) (cri_ArchiveHandle);
+	t_cri_CloseArchive fp_cri_CloseArchive;
+
+	// ------------------------------------------------------------------------
+
+	// DLL Laden
+	std::string mname = "CriMsiFileFormats.dll";
+	dllNuance = LoadLibraryA(mname.c_str());
+	if (dllNuance == NULL)
+	{
+		this->ErrorMsgLog("In SpecIL_Nuance::readImageData(): Cant open CriMsiFileFormats.dll");
+		return -1;
+	};
+
+	DWORD lasterr = GetLastError();
+
+	// Variablen fuer den Zugriff
+	cri_ArchiveHandle crihandle;		// handle
+	cri_ErrorCode cri_ec;				// Fehlercode
+	char buf[512];						// Buffer Dateiname
+	sprintf(buf,"%s",this->SpecHeader.filename.c_str());
+
+	// Archiv oeffnen
+	fp_cri_OpenReadArchive = (t_cri_OpenReadArchive) GetProcAddress(dllNuance, "cri_OpenReadArchive" );
+	cri_ec = (*fp_cri_OpenReadArchive)(&buf[0],&crihandle);
+
+	// Wellenlaengen holen
+	float* wavelengths = NULL;
+	int numWavelengths = 0;
+	fp_cri_GetCubeWavelengths = (t_cri_GetCubeWavelengths) GetProcAddress(dllNuance, "cri_GetCubeWavelengths" );
+	// Anzahl der Wellenlaengen
+	cri_ec = (*fp_cri_GetCubeWavelengths) (crihandle,NULL,&numWavelengths);
+	// Buffer prealloc (besser zum wieder freigeben)
+	wavelengths = new float[numWavelengths];
+	cri_ec = (*fp_cri_GetCubeWavelengths) (crihandle,&wavelengths,&numWavelengths);
+	
+	// Integrationszeiten holen
+	float* exposureTimeUS = NULL;
+	int numExposureTimes = 0;
+	fp_cri_GetCubeExposureTimeUS = (t_cri_GetCubeExposureTimeUS) GetProcAddress(dllNuance, "cri_GetCubeExposureTimeUS" );
+	// Anzahl der Integrationszeiten
+	cri_ec = (*fp_cri_GetCubeExposureTimeUS) (crihandle,NULL,&numExposureTimes);
+	// Buffer prealloc (besser zum wieder freigeben)
+	exposureTimeUS = new float[numExposureTimes];
+	cri_ec = (*fp_cri_GetCubeExposureTimeUS) (crihandle,&exposureTimeUS,&numExposureTimes);
+
+	// Umschreiben in Vektoren
+	this->SpecHeader.wavelen.clear();
+	for (int k=0;k<numWavelengths;k++)
+	{
+		this->SpecHeader.wavelen.push_back(wavelengths[k]);
+	};
+	this->SpecHeader.exposureTimeUS.clear();
+	for (int k=0;k<numExposureTimes;k++)
+	{
+		this->SpecHeader.exposureTimeUS.push_back(exposureTimeUS[k]);
+	};
+	
+	int width;
+	int height;
+	int numChannels;
+	int pixelDataType;
+	int pixelUnit;
+	fp_cri_GetCubeData = (t_cri_GetCubeData) GetProcAddress(dllNuance, "cri_GetCubeData" );
+	// Parameter holen
+	cri_ec = (*fp_cri_GetCubeData) (crihandle,NULL,&width,&height,&numChannels,&pixelDataType,&pixelUnit);
+
+	if(this->ManualImageProperties == 0)
+	{
+		// Anordnung sichern
+		this->SpecHeader.interleave = t_SpecHead::IL_BIP; // in .im3 immer BIP ?????
+
+		this->SpecHeader.imgsize[0] = width;		// x
+		this->SpecHeader.imgsize[1] = numChannels;	// z
+		this->SpecHeader.imgsize[2] = height;		// y
+		
+		if(pixelDataType == 3) // 16 Bit Unsigned Integer
+		{
+			this->SpecHeader.data_type = t_SpecHead::DT_16_UINT;
+			this->SpecHeader.pixelsize = 2;
+		}
+	/*	else if (pixelDataType == 7) //4 Byte pro Pixel? Float?
+		{
+			this->SpecHeader.pixelsize = 4;
+			this->SpecHeader.data_type = t_SpecHead::DT_32_FLOAT;// ??????
+		}*/
+		else
+		{
+			this->ErrorMsgLog("In SpecIL_Nuance::read(): unknown pixelDataType");
+		
+			// Datei wieder schliessen
+			fp_cri_CloseArchive = (t_cri_CloseArchive) GetProcAddress(dllNuance, "cri_CloseArchive" );
+			cri_ec = (*fp_cri_CloseArchive) (crihandle);
+		
+			// Lib freigeben
+			FreeLibrary(dllNuance);
+			dllNuance = NULL;
+
+			return -1;
+		};
+	};
+
+	// Cube nicht geladen
+	this->SpecHeader.type = 0;
+
+	// Datei wieder schliessen
+	fp_cri_CloseArchive = (t_cri_CloseArchive) GetProcAddress(dllNuance, "cri_CloseArchive" );
+	cri_ec = (*fp_cri_CloseArchive) (crihandle);
+
+	// Lib freigeben
+	FreeLibrary(dllNuance);
+	dllNuance = NULL;
+	
+	// buffer freigeben
+	delete(wavelengths);
+	delete(exposureTimeUS);
+
+	// FLAGs setzen
+	this->FileHeaderLoaded = 1;
+
+	return 0;
+};
+//
+int SpecIL_Nuance::readImageData()
+{
+	if(this->SpecHeader.imgcube != NULL)
+	{
+		// zur Sicherheit Speicher freigeben, falls doch was drin stehen sollte...
+		this->ErrorMsgLog("Warning! SpecIL_Nuance::readImageData(): Data in this->SpecHeader.imgcube is deleted");
+		delete[] this->SpecHeader.imgcube;
+		this->SpecHeader.imgcube = NULL;
+	};
+	
+	// Abhaengige dll muessen vorhanden sein!
+	// "msvcp71d.dll", "msvcr71d.dll"
+
+	// dllNuance = LoadLibraryA("msvcp71d.dll");
+	// DWORD WINAPI lasterr = GetLastError();
+	// dllNuance = LoadLibraryA("msvcr71d.dll");
+	// lasterr = GetLastError();
+	
+	// ----
+	// Funktionzeigertypen und Funktionszeiger definieren
+	// Archiv oeffnen
+	typedef cri_ErrorCode	(*t_cri_OpenReadArchive)		(char*,cri_ArchiveHandle*);
+	t_cri_OpenReadArchive  fp_cri_OpenReadArchive;
+	// Wellenlaengen holen
+	typedef cri_ErrorCode	(*t_cri_GetCubeWavelengths)	(cri_ArchiveHandle,float**,int*);
+	t_cri_GetCubeWavelengths fp_cri_GetCubeWavelengths;
+	// Integrationszeiten holen
+	typedef cri_ErrorCode (*t_cri_GetCubeExposureTimeUS) (cri_ArchiveHandle,float**,int*);
+	t_cri_GetCubeExposureTimeUS fp_cri_GetCubeExposureTimeUS;
+	// Data Cube holen
+	typedef cri_ErrorCode (*t_cri_GetCubeData) (cri_ArchiveHandle,void**,int*,int*,int*,int*,int*);
+	t_cri_GetCubeData fp_cri_GetCubeData;
+	// Archiv schliessen
+	typedef cri_ErrorCode (*t_cri_CloseArchive) (cri_ArchiveHandle);
+	t_cri_CloseArchive fp_cri_CloseArchive;
+
+	// ------------------------------------------------------------------------
+
+	// DLL Laden
+	std::string mname = "CriMsiFileFormats.dll";
+	dllNuance = LoadLibraryA(mname.c_str());
+	if (dllNuance == NULL)
+	{
+		this->ErrorMsgLog("In SpecIL_Nuance::readImageData(): Cant open CriMsiFileFormats.dll");
+		return -1;
+	};
+
+	DWORD lasterr = GetLastError();
+
+	// Variablen fuer den Zugriff
+	cri_ArchiveHandle crihandle;		// handle
+	cri_ErrorCode cri_ec;				// Fehlercode
+	char buf[512];						// Buffer Dateiname
+	sprintf(buf,"%s",this->SpecHeader.filename.c_str());
+
+	// Archiv oeffnen
+	fp_cri_OpenReadArchive = (t_cri_OpenReadArchive) GetProcAddress(dllNuance, "cri_OpenReadArchive" );
+	cri_ec = (*fp_cri_OpenReadArchive)(&buf[0],&crihandle);
+
+
+	// Daten holen vorbereiten
+	void* cridata = NULL;
+	int width;
+	int height;
+	int numChannels;
+	int pixelDataType;
+	int pixelUnit;
+	fp_cri_GetCubeData = (t_cri_GetCubeData) GetProcAddress(dllNuance, "cri_GetCubeData" );
+	cridata = (void*) new char[this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize];
+	
+	// Parameter holen
+	cri_ec = (*fp_cri_GetCubeData) (crihandle,NULL,&width,&height,&numChannels,&pixelDataType,&pixelUnit);
+	
+	// Werte holen
+	cri_ec = (*fp_cri_GetCubeData) (crihandle,&cridata,&width,&height,&numChannels,&pixelDataType,&pixelUnit);
+
+	if (cridata == NULL)
+	{
+		this->ErrorMsgLog("In SpecIL_Nuance::readImageData(): Cant read data");
+			
+		// Datei wieder schliessen
+		fp_cri_CloseArchive = (t_cri_CloseArchive) GetProcAddress(dllNuance, "cri_CloseArchive" );
+		cri_ec = (*fp_cri_CloseArchive) (crihandle);
+		
+		// Lib freigeben
+		FreeLibrary(dllNuance);
+		dllNuance = NULL;
+		
+		return -1;
+	};
+
+	// Daten casten
+	if (this->SpecHeader.data_type != t_SpecHead::DT_UNKNOWN) // Weitere Bedingungen?
+	{
+		this->SpecHeader.maxval = 0.0;
+		char* cricube = (char*) cridata;
+		// maxval bestimmen!
+		// Wenn gerade in den Schleifen...dann gleich umsortieren von BIP nach BSQ
+		// Bild wird nicht gedreht!!!!
+		// im Speicher:
+		// 0 .--------------> x => spatial (samples) (width)
+		//	 |
+		//	 |
+		//	 |
+		//	 |
+		//   V y = imgsize[2] => frame (lines) (height)
+		//
+		char* imgdata = new char[this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize];
+		for (unsigned long long x = 0; x < this->SpecHeader.imgsize[0]; x++)
+		{
+			for (unsigned long long y = 0; y < this->SpecHeader.imgsize[2]; y++)
+			{
+				for (unsigned long long b = 0; b < this->SpecHeader.imgsize[1]; b++)
+				{
+					// Xbip = x * numChannels
+					// Ybip = y * numChannels * height
+					// Zbip = b
+					unsigned long long crioff = (b + x * this->SpecHeader.imgsize[1] + y * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+					// Xbsq = x
+					// Ybsq = y * width
+					// Zbsq = b * height * width
+					unsigned long long imgoff = (x + y * this->SpecHeader.imgsize[0] + b * this->SpecHeader.imgsize[2] * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;	
+					double pixval;
+
+					// Unterscheidung nach Pixelgroesse und Datentyp
+					if (this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+					{
+						imgdata[imgoff] = cricube[crioff];
+						imgdata[imgoff+1] = cricube[crioff+1];
+
+						unsigned short dd;
+						((char*)&dd)[0] = cricube[crioff];
+						((char*)&dd)[1] = cricube[crioff+1];
+						pixval = (double) dd;
+					};
+
+			/*		if(this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT) // noch nicht getestet!!!
+					{
+						imgdata[imgoff] = cricube[crioff];
+						imgdata[imgoff+1] = cricube[crioff+1];
+						imgdata[imgoff+2] = cricube[crioff+2];
+						imgdata[imgoff+3] = cricube[crioff+3];
+
+						double dd;
+						((char*)&dd)[0] = cricube[crioff];
+						((char*)&dd)[1] = cricube[crioff+1];
+						((char*)&dd)[2] = cricube[crioff+2];
+						((char*)&dd)[3] = cricube[crioff+3];
+						pixval = dd;
+					};//*/
+
+					if (this->SpecHeader.maxval < pixval)
+					{
+						this->SpecHeader.maxval = pixval;
+					};
+				};
+			};
+		};
+		// Anordnung sichern
+		this->SpecHeader.interleave = t_SpecHead::IL_BSQ;
+		
+		// Cube geladen
+		this->SpecHeader.imgcube = (void*) imgdata;
+		this->SpecHeader.type = 1;
+	}
+	else
+	{
+		this->ErrorMsgLog("In SpecIL_Nuance::readImageData(): Cant read data -> invalid parameters");
+		return -1;
+	};
+
+	// Datei wieder schliessen
+	fp_cri_CloseArchive = (t_cri_CloseArchive) GetProcAddress(dllNuance, "cri_CloseArchive" );
+	cri_ec = (*fp_cri_CloseArchive) (crihandle);
+
+	// Lib freigeben
+	FreeLibrary(dllNuance);
+	dllNuance = NULL;
+
+	delete(cridata);
+
+	// FLAGs setzen
+	this->FileDataLoaded = 1;
+
+	return 0;
+};
+//
+int SpecIL_Nuance::write(std::string outfile)
+{
+	std::string endung = outfile.substr(outfile.find_last_of(".")+1);
+
+	if( endung == "img" || endung == "bin")
+	{
+		// Daten speichern
+		// this->writeDataToFile(outfile);
+		// hier nicht die Methode der Basisklasse, da das Nuance Bild noch gedreht werden muss!
+		
+		std::fstream fsDataOutfile;
+		fsDataOutfile.open(outfile, std::fstream::out | std::fstream::binary);
+		unsigned int outheadsize = 0;
+
+		char buffer8[8] = {'H', 'Y', 'S', 'P', 'E', 'X', 0x00, 0x00};
+		fsDataOutfile.write(buffer8, 8);
+		outheadsize = outheadsize + 8;
+
+		// Headergroesse
+		char* outheadsizebuffer4 = reinterpret_cast<char*>(&outheadsize);
+		fsDataOutfile.write(outheadsizebuffer4, 4);
+		outheadsize = outheadsize + 4;
+
+		// Dummy
+		char dummybuffer[1949];
+		fsDataOutfile.write(dummybuffer, 1949);
+		outheadsize = outheadsize + 1949;
+
+		// Baender
+		unsigned int bands = (unsigned int) this->SpecHeader.imgsize[1];
+		char* bufferbands = reinterpret_cast<char*>(&bands);
+		fsDataOutfile.write(bufferbands,4);
+		outheadsize = outheadsize + 4;
+
+		// spatial
+		unsigned int spatial = (unsigned int) this->SpecHeader.imgsize[0];
+		char* bufferspatial = reinterpret_cast<char*>(&spatial);
+		fsDataOutfile.write(bufferspatial,4);
+		outheadsize = outheadsize + 4;
+
+		// Dummy
+		char dummy2buffer[4*26];
+		fsDataOutfile.write(dummy2buffer,4*26);
+		outheadsize = outheadsize + 4*26;
+
+		// Frames
+		unsigned int frames = (unsigned int) this->SpecHeader.imgsize[2];
+		char* bufferframes = reinterpret_cast<char*>(&frames);
+		fsDataOutfile.write(bufferframes,4);
+		outheadsize = outheadsize + 4;
+
+		if(this->SpecHeader.wavelen.size() > 0)
+		{
+			// Dummy
+			char dummy3buffer[104];
+			fsDataOutfile.write(dummy3buffer,104);
+			outheadsize = outheadsize + 104;
+	
+			// Wellenlaengen
+			for(int i = 0; i < this->SpecHeader.wavelen.size(); i++)
+			{
+				double value = (double) this->SpecHeader.wavelen.at(i);
+				char* valbuffer = reinterpret_cast<char*>(&value);
+				fsDataOutfile.write(valbuffer,8);
+				outheadsize = outheadsize + 8;
+			};
+		};
+
+		// Endgueltige Headergroesse schreiben
+		unsigned long outpos = fsDataOutfile.tellp();
+		fsDataOutfile.seekp(8);
+		fsDataOutfile.write(outheadsizebuffer4, 4);
+		fsDataOutfile.seekp(outpos);
+		this->SpecHeader.outheadsize = (int)outheadsize;
+
+		// Bilddaten 90° im gegen Uhrzeigersinn drehen und spiegeln
+		// Warum?
+		// Da die HySpex Routinen das Bild drehen und spiegel!
+		// Somit koennen die implementierten HySpex Routinen ohne einer Anpassung verwendet werden
+		// und das Bild ist richtig ausgerichtet!
+		unsigned long long imgsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+		char* OutDataBuff = new char[imgsize];
+		std::string str(static_cast< char* >( this->SpecHeader.imgcube ), imgsize);
+
+		for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++) // z
+		{
+			unsigned long long band = k * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2];
+			
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[0]; j++) // x
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++) // y
+				{
+					unsigned long long rawdataoff = (i + j * this->SpecHeader.imgsize[2] + band) * this->SpecHeader.pixelsize;
+					// x und y vertauschen...
+					unsigned long long outdataoff = (j + i * this->SpecHeader.imgsize[0] + band) * this->SpecHeader.pixelsize;
+					str.copy(&OutDataBuff[outdataoff], this->SpecHeader.pixelsize, rawdataoff);
+				};
+			};
+		};
+/*	
+		// Zum testen Daten von BSQ als BIP speichern und dabei richtig invertiert fuer die HySpex Routinen:
+		for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++)
+		{
+			unsigned long long band = k * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2];
+			
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[0]; j++)
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+				{
+					unsigned long long rawdataoff = (i + j * this->SpecHeader.imgsize[2] + band) * this->SpecHeader.pixelsize;
+					unsigned long long outdataoff = (k + (j + i * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+					str.copy(&OutDataBuff[outdataoff], this->SpecHeader.pixelsize, rawdataoff);
+				};
+			};
+		};
+		this->SpecHeader.interleave = t_SpecHead::IL_BIP;
+//*/
+		// Bilddaten schreiben
+		fsDataOutfile.write(OutDataBuff, imgsize);
+		fsDataOutfile.close();
+		
+		// .hdr schreiben
+		std::string outhdrfile = outfile.substr(0, outfile.find_last_of("."));
+		outhdrfile = outhdrfile + ".hdr";
+		this->writeENVIhdr(outhdrfile);
+
+		return 0;
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Nuance::write(): no support for " + endung + " extension!");
+	return -1;
+};
+//
+int SpecIL_Nuance::getPlane(void* plane, int x, int y, int z)
+{
+	// wurde read() ausgefuehrt ?
+	if(this->SpecHeader.type == 0)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Nuance::getPlane(): SpecHeader.type == 0, Data was not readed! Run read()!");
+		return -1;
+	};
+	// Daten vollstaendig im Speicher
+	if(this->SpecHeader.type == 1)
+	{
+		// Ein Band ausgeben
+		if(x < 0 && y < 0 && z < this->SpecHaederProfile.imgsize[1])
+		{
+			// RAW
+			if(this->OutputProfile == 0)
+			{
+				this->getPlane_RAW_Band(plane, x, y, z);
+			};
+			// C-Workflow
+			if(this->OutputProfile == 1)
+			{
+				this->getPlane_RAW_Band(plane, y, x, z);
+			};
+			return 0;
+		};
+		// Einen Frame ausgeben
+		if(x < 0 && z < 0 && y < this->SpecHaederProfile.imgsize[2])
+		{
+			// RAW
+			if(this->OutputProfile == 0)
+			{
+				this->getPlane_RAW_Frame(plane, x, y, z);
+			};
+			// C-Workflow
+			if(this->OutputProfile == 1)
+			{
+				this->getPlane_CWF_Frame(plane, x, y, z);
+			};
+			return 0;
+		};
+		// Ein Samplebild ausgeben
+		if(y < 0 && z < 0 && x < this->SpecHaederProfile.imgsize[0])
+		{
+			// RAW
+			if(this->OutputProfile == 0)
+			{
+				this->getPlane_RAW_Sample(plane, x, y, z);
+			};
+			// C-Workflow
+			if(this->OutputProfile == 1)
+			{
+				this->getPlane_CWF_Sample(plane, x, y, z);
+			};
+			return 0;
+		};
+	};
+	// Daten nicht im Speicher
+	if(this->SpecHeader.type == 2)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Nuance::getPlane(): SpecHeader.type == 2, Working with Data on HDD is not supported.");
+		return -1;
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Nuance::getPlane(): invalid parameters x, y, z, interleave or type");
+	return -1;
+};
+//
+int SpecIL_Nuance::getPlane_CWF_Frame(void* plane, int x, int y, int z)
+{
+	char* FrameImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if(this->SpecHaederProfile.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHaederProfile.imgcube);
+		// band sequential
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+		{	
+			unsigned long long cubeoff = (unsigned long long)y * this->SpecHaederProfile.pixelsize;
+			unsigned long long max = this->SpecHaederProfile.imgsize[1] * this->SpecHaederProfile.imgsize[0];
+			for(unsigned long long i = 0; i < max; i++)
+			{
+				std::memmove(&FrameImgbuff[i * this->SpecHaederProfile.pixelsize], &Cubebuff[cubeoff], this->SpecHaederProfile.pixelsize);
+				cubeoff = cubeoff + this->SpecHaederProfile.imgsize[2] * this->SpecHaederProfile.pixelsize;
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BIL)
+		{
+			// Err
+			this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Frame(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Frame(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Daten auf HDD
+	// oder von/auf HDD arbeiten?
+	if(this->SpecHaederProfile.type == 2)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Frame(): Work on file is not supported!");
+		return -1;
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Frame(): Invalid parameters!");
+	return -1;
+};
+//
+int SpecIL_Nuance::getPlane_CWF_Sample(void* plane, int x, int y, int z)
+{
+	char* SampleImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if(this->SpecHaederProfile.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHaederProfile.imgcube);
+		// band sequential
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long sampleoff = 0;
+			for(unsigned long long j = 0; j < this->SpecHaederProfile.imgsize[2]; j++) // y
+			{
+				unsigned long long cubeoff = ((unsigned long long)x + j)* this->SpecHaederProfile.pixelsize;
+				for(unsigned long long i = 0; i < this->SpecHaederProfile.imgsize[1]; i++) // z
+				{
+					std::memmove(&SampleImgbuff[sampleoff], &Cubebuff[cubeoff], this->SpecHaederProfile.pixelsize);
+					sampleoff = sampleoff + this->SpecHaederProfile.pixelsize;
+					cubeoff = cubeoff + this->SpecHaederProfile.imgsize[2] * this->SpecHaederProfile.imgsize[0] * this->SpecHaederProfile.pixelsize;
+				};
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BIL)
+		{
+			// Err
+			this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Sample(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Sample(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Daten auf HDD
+	// oder von/auf HDD arbeiten?
+	if(this->SpecHaederProfile.type == 2)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Sample(): Work on file is not supported!");
+		return -1;
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Nuance::getPlane_CWF_Sample(): Invalid parameters!");
+	return -1;
+};
+//
+int SpecIL_Nuance::getVector(void* vector, int x, int y, int z)
+{
+	// Daten vollstaendig im Speicher
+	if(this->SpecHaederProfile.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHaederProfile.imgcube);
+		// x - Vektor
+		if(x < 0 && y < this->SpecHaederProfile.imgsize[2] && z < this->SpecHaederProfile.imgsize[1])
+		{
+			if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+			{
+				char*xVectorBuff = static_cast<char*>(vector);
+				for(unsigned long long i = 0; i <this->SpecHaederProfile.imgsize[0]; i++)
+				{
+					unsigned long long cubeoff = (((unsigned long long)z * this->SpecHaederProfile.imgsize[0] + i ) * this->SpecHaederProfile.imgsize[2] + (unsigned long long)y) * this->SpecHaederProfile.pixelsize;
+					std::memmove(&xVectorBuff[i*this->SpecHaederProfile.pixelsize], &Cubebuff[cubeoff], this->SpecHaederProfile.pixelsize);
+				};
+				return 0;
+			};
+		};
+		// y - Vektor
+		if(x < this->SpecHaederProfile.imgsize[0] && y < 0 && z < this->SpecHaederProfile.imgsize[1])
+		{
+			if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+			{
+				char*yVectorBuff = static_cast<char*>(vector);
+				unsigned long long cubeoff = ((unsigned long long)x + (unsigned long long)z * this->SpecHaederProfile.imgsize[0]) * this->SpecHaederProfile.imgsize[2] * this->SpecHaederProfile.pixelsize;
+				std::memmove(yVectorBuff, &Cubebuff[cubeoff], this->SpecHaederProfile.imgsize[2]*this->SpecHaederProfile.pixelsize);
+				return 0;
+			};
+		};
+		// z - Vektor
+		if(x < this->SpecHaederProfile.imgsize[0] && y < this->SpecHaederProfile.imgsize[1] && z < 0)
+		{
+			if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+			{
+				char*zVectorBuff = static_cast<char*>(vector);
+				for(unsigned long long i = 0; i <this->SpecHaederProfile.imgsize[1]; i++)
+				{
+					unsigned long long cubeoff = ((unsigned long long)y + ((unsigned long long)x + i * this->SpecHaederProfile.imgsize[0]) * this->SpecHaederProfile.imgsize[2]) * this->SpecHaederProfile.pixelsize;
+					std::memmove(&zVectorBuff[i*this->SpecHaederProfile.pixelsize], &Cubebuff[cubeoff], this->SpecHaederProfile.pixelsize);
+				};
+				return 0;
+			};
+		};
+	};
+	// Daten nicht im Speicher
+	if(this->SpecHaederProfile.type == 2)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_HySpex::getVector(): SpecHeader.type == 2, Working with data on HDD is not supported.");
+		return -1;
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Nuance::getVector(): invalid parameters x, y, z, interleave or type");
+
+	return -1;
+};
+//
+int SpecIL_Nuance::getPoint(void* point, int x, int y, int z)
+{
+	// wurde read() ausgefuehrt ?
+	if(this->SpecHaederProfile.type == 0)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Nuance::getPoint(): SpecHeader.type == 0, Data was not readed! Run read()!");
+		return -1;
+	};
+	//
+	// Daten vollstaendig im Speicher
+	if(this->SpecHaederProfile.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHaederProfile.imgcube);
+		// band sequential
+		if(this->SpecHaederProfile.interleave == t_SpecHead::IL_BSQ)
+		{
+			char* Point = static_cast< char* >(point);
+			unsigned long long cubeoff = ((unsigned long long)y + ((unsigned long long)x + (unsigned long long)z * this->SpecHaederProfile.imgsize[0]) * this->SpecHaederProfile.imgsize[2]) * this->SpecHaederProfile.pixelsize;
+			std::memmove(Point, &Cubebuff[cubeoff], this->SpecHaederProfile.pixelsize);
+			return 0;
+		};
+	};
+	// Daten nicht im Speicher
+	if(this->SpecHaederProfile.type == 2)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_HySpex::getPoint(): SpecHeader.type == 2, Working with data on HDD is not supported.");
+		return -1;
+	};
+};

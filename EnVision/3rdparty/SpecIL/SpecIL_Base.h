@@ -1,0 +1,225 @@
+#ifndef SPECIL_BASE_H
+#define SPECIL_BASE_H
+
+#include "SpecIL_Interface.h"
+
+#include <string>
+#include <vector>
+#include <fstream>
+#include <sstream>
+
+class SpecIL_Base : public SpecIL_Interface
+{
+public:
+	// Destruktor
+	~SpecIL_Base();
+	// Konstruktor
+	SpecIL_Base();
+
+	// Arbeitsprofil festlegen
+	int setProfile(std::string profile);
+
+	// Bild/Daten-Eigenschaften setzen:
+	void setImageProperties(const char* id,
+		int width,
+		int height,
+		int planes,
+		t_SpecHead::t_interleave il,
+		t_SpecHead::t_data_type dt
+		);
+
+	void setReadOnlyFromHDD();
+
+	// Pointer auf den Header
+	t_SpecHead* getHeaderPointer();
+	t_SpecHead* getHeader();
+
+	// Ebene
+	int getPlane(void* plane, int x, int y, int z);
+	int getPlane(void* plane, int *x, int *y, int *z);
+	int setPlane(void* plane, int x, int y, int z);
+
+	// Vektor
+	int getVector(void* vector, int x, int y, int z);
+	int setVector(void* vector, int x, int y, int z);
+
+	// Punkt
+	int getPoint(void* point, int x, int y, int z);
+
+	// Fileheader lesen
+	int readFileHeader();
+
+	void setImageSize(unsigned int width, unsigned int height, unsigned int planes);
+
+	// Datentyp nach ENVI Formtat (s. Oben!)
+	void setDataType(t_SpecHead::t_data_type dt);
+
+	void setInterleave(t_SpecHead::t_interleave il);
+
+	// ID
+	void setID(const char* id);
+
+	// Wellenlaengen
+	void setWavelen(std::vector <float> wavelen);
+
+	// Belichtungszeiten der Wellenlaengen
+	void setExposureTimeUS(std::vector <float> exposureTimeUS);
+
+	int write();
+
+	void close();
+
+	void setFileMode(unsigned int fm);
+
+	int initNewFile();
+
+	void setCubeMaxSize(unsigned long long cms);
+
+	void EnableErrorLog();
+	void DisableErrorLog();
+
+	void setHeadersize(unsigned int hs);
+
+	int getOpenCVDatatype();
+
+	// ENVI Header Datei ".hdr" einlesen 
+	// und Informationen in SpecIL_Base::SpecHeader speichern
+	int readENVIhdr();
+
+	void CopyHeaderFrom(t_SpecHead HeaderSource);
+	int copyQEfrom(void* QEarray, size_t QESize);
+	int copyREfrom(void* REarray, size_t RESize);
+	int copyBGfrom(void* BGarray, size_t BGSize);
+	int copyBadPixelfrom(void* BadPixelarray, size_t BadPixelSize);
+
+protected:
+	t_SpecHead SpecHeader;					// Header, ueberwiegend im ENVI Format
+	// ------------------------------------------------------------------------
+	// Flags ( noch nicht schoen implementiert. Am liebsten in einen Datentyp rein
+	// und nur das eine Bit pruefen)
+	//
+	int FileHeaderLoaded;					// Status Fileheaderinformationen
+	//		0 - not loaded
+	//		1 - loaded
+	int FileDataLoaded;						// Status Bildaten
+	//		0 - not loaded
+	//		1 - loaded in RAM or HDD
+	int ProfileLoaded;						// Status Profil
+	//		0 - not loaded
+	//		1 - loaded
+	int ReadOnlyFromHDD;					//
+	//		0 - use HDD and RAM
+	//		1 - read only from HDD
+	bool ENVIhdrLoaded;
+	bool UsingErrorLog;
+	// Interne Variablen fuer die Verarbeitung und I-O-Operationen
+	unsigned int FileMode;					//	Modus
+	//		0 - Lesen
+	//		1 - schreiben
+	//		2 - lesen+schreiben
+	int OutputProfile;						//	Ausgabeprofil der Daten
+	//		0 - Standard
+	//		1 - C-Workflow
+	unsigned int SelectedImgProperties;		// Verwendete Bildeigenschaften
+	// 0 - Header
+	// 1 - Meta-File
+	// 2 - Manuelle Eingabe (setImageProperties)
+	unsigned long long cubemaxsize;				// Maximal erlaubte Groesse des Daten-Cubes
+	// im Arbeitsspeicher!
+	int NewFileData;						// 0 - nicht vorhanden
+	// 1 - vorhanden
+	// ------------------------------------------------------------------------
+	std::string tempOutFileName;
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	// Initialisierung mit Standardwerten
+	int init();
+
+	// Laed das gesetzte Profil
+	int loadProfile();
+
+
+	// Datei oeffnen und Bilddaten (wenn moeglich bei ausreichend RAM)
+	// einlesen
+	int readImageData();
+
+	// ENVI Header Datei .hdr schreiben
+	int writeENVIhdr(std::string outhdrfile);
+
+	// Daten als HySpex Datei speichern
+	int writeDataToHySpexFile(std::string outHySpexFile);
+
+	// Daten als TGD Datei speichern
+	int writeDataToTGDfile(std::string outTGDfile);
+
+	// TGD Meta file..
+	int writeTGDmetaFile(std::string outTGDmetaFile);
+
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	// Standard Ausgabeprofil
+	// Ebenen
+	//	int getPlane_Band(void* plane, int x, int y, int z);
+	int getPlane_Band(void* plane, int *x, int *y, int z);
+
+	//int getPlane_Frame(void* plane, int x, int y, int z);
+	int getPlane_Frame(void* plane, int *x, int y, int *z);
+
+	//int getPlane_Sample(void* plane, int x, int y, int z);
+	int getPlane_Sample(void* plane, int x, int *y, int *z);
+
+	int setPlane_Band(void* plane, int z);
+	int setPlane_Frame(void* plane, int y);
+	int setPlane_Sample(void* plane, int x);
+
+	// Vektoren
+	int getVector_X(void* vector, int y, int z);
+	int getVector_Y(void* vector, int x, int z);
+	int getVector_Z(void* vector, int x, int y);
+
+	int setVector_X(void* vector, int y, int z);
+	int setVector_Y(void* vector, int x, int z);
+	int setVector_Z(void* vector, int x, int y);
+
+	int setPoint(void* point, int x, int y, int z);
+	// ------------------------------------------------------------------------
+
+	// Ausgabeprofil: C-Workflow (CWF)
+	// Ebenen
+
+	// Fuer den CWorkflow wird das Bild gedreht
+	int getPlane_Band_CWF(void* plane, int x, int y, int z);
+
+	// Diese Methoden drehen das Bild nicht, sonder die Bezeichnungen von x und y sind vertauscht
+	// Siehe Nuance!
+	// Im Cworkflow werden die Aufnahmen der Nuance Kamera nicht gedreht. Aber die Achsenbezeichnung getauscht x-y
+	// Dementsprechend sehen Frame und Samplebild anders aus!
+	// Das N vor CWF steht dabei fuer die Nuance Kamera aufnahme
+	int getPlane_Frame_NCWF(void* plane, int x, int y, int z);// N fuer Nuance
+	int getPlane_Sample_NCWF(void* plane, int x, int y, int z);// N fuer Nuance
+
+	// Vektoren
+	int getVector_NX(void* vector, int y, int z); // N fuer Nuance
+	int getVector_NY(void* vector, int x, int z); // N fuer Nuance
+	int getVector_NZ(void* vector, int x, int z); // N fuer Nuance
+
+	// Punkt
+	int getPoint_N(void* point, int x, int y, int z);
+	// ------------------------------------------------------------------------
+
+	// Error-Handling
+	void ErrorMsgLog(std::string errmsg);
+
+	// Speicher frei geben und aufraeumen
+	int CleanMemory();
+
+	int initNewFileCube();
+
+	void setDataTypeMaxMin();
+
+
+
+};
+#endif // SpecIL_BASE_H

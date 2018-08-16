@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <HDF5>$(IFFLIBRARYPATH)\hdf5\1.8.17</HDF5>
+    <PATH>$(HDF5)\bin\%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <HDF5>$(IFFLIBRARYPATH)\hdf5\1.8.17</HDF5>
+    <PATH>$(HDF5)\bin\%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <HDF5>$(IFFLIBRARYPATH)\hdf5\1.8.17</HDF5>
+    <PATH>$(HDF5)\bin\%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <HDF5>$(IFFLIBRARYPATH)\hdf5\1.8.17</HDF5>
+    <PATH>$(HDF5)\bin\%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(HDF5)\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(HDF5)\lib\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hdf5_cpp.lib;hdf5_tools.lib;hdf5_hl_cpp.lib;hdf5_hl_fortran.lib;libhdf5_cpp.lib;hdf5_fortran.lib;libhdf5_fortran.lib;libhdf5_tools.lib;libhdf5_hl_cpp.lib;libhdf5_hl_f90cstub.lib;hdf5_hl_f90cstub.lib;libhdf5_f90cstub.lib;libhdf5_hl.lib;hdf5_f90cstub.lib;hdf5_hl.lib;hdf5.lib;libhdf5.lib;libzlib.lib;libszip.lib;zlib.lib;szip.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(HDF5)\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(HDF5)\lib\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hdf5_cpp.lib;hdf5_tools.lib;hdf5_hl_cpp.lib;hdf5_hl_fortran.lib;libhdf5_cpp.lib;hdf5_fortran.lib;libhdf5_fortran.lib;libhdf5_tools.lib;libhdf5_hl_cpp.lib;libhdf5_hl_f90cstub.lib;hdf5_hl_f90cstub.lib;libhdf5_f90cstub.lib;libhdf5_hl.lib;hdf5_f90cstub.lib;hdf5_hl.lib;hdf5.lib;libhdf5.lib;libzlib.lib;libszip.lib;zlib.lib;szip.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(HDF5)\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(HDF5)\lib\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hdf5_cpp.lib;hdf5_tools.lib;hdf5_hl_cpp.lib;hdf5_hl_fortran.lib;libhdf5_cpp.lib;hdf5_fortran.lib;libhdf5_fortran.lib;libhdf5_tools.lib;libhdf5_hl_cpp.lib;libhdf5_hl_f90cstub.lib;hdf5_hl_f90cstub.lib;libhdf5_f90cstub.lib;libhdf5_hl.lib;hdf5_f90cstub.lib;hdf5_hl.lib;hdf5.lib;libhdf5.lib;libzlib.lib;libszip.lib;zlib.lib;szip.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(HDF5)\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\Treiberdatenbank\tapSANSi\VS2017\64Bit\002.Build\hdf5\1.8.17\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>hdf5_cpp.lib;hdf5_tools.lib;hdf5_hl_cpp.lib;hdf5_hl_fortran.lib;libhdf5_cpp.lib;hdf5_fortran.lib;libhdf5_fortran.lib;libhdf5_tools.lib;libhdf5_hl_cpp.lib;libhdf5_hl_f90cstub.lib;hdf5_hl_f90cstub.lib;libhdf5_f90cstub.lib;libhdf5_hl.lib;hdf5_f90cstub.lib;hdf5_hl.lib;hdf5.lib;libhdf5.lib;libzlib.lib;libszip.lib;zlib.lib;szip.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

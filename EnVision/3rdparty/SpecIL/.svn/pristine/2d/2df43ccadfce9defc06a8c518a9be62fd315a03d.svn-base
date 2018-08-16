@@ -1,0 +1,1026 @@
+#include "SpecIL_TGD.h"
+
+SpecIL_TGD::~SpecIL_TGD()
+{
+//	this->CleanMemory();
+	this->meta_wavelengths.clear();
+};
+//
+SpecIL_TGD::SpecIL_TGD()
+{
+	this->TGDinit();
+};
+//
+void SpecIL_TGD::TGDinit()
+{
+	// .tgd
+	this->header_dimensions = 0;
+	this->header_dims[0] = 0;
+	this->header_dims[1] = 0;
+	this->header_dims[2] = 0;
+	this->header_dims[3] = 0;
+	this->header_datatype = 0;
+	this->header_headersize = 0;
+
+	// .tgd.meta
+	this->meta_bitdepth = 0;
+	this->meta_sensorheight = 0;
+	this->meta_sensorwidth = 0;
+	this->meta_planes = 0;
+	this->meta_wavelengths.clear();
+	this->meta_interleave = t_SpecHead::IL_UNKNOWN;
+	this->meta_datatype = t_SpecHead::DT_UNKNOWN;
+	this->meta_datatype_str = "UNKNOWN";
+	this->meta_camera.clear();
+};
+//
+int SpecIL_TGD::loadProfile()
+{
+	// RAW
+	if (this->OutputProfile == 0)
+	{
+		this->ProfileLoaded = 1;	// oder doch 0 ? Weil ja eigentlich das RAW Profil kein richtiges Profil ist...
+		return 0;
+	};
+
+	// CWorkflow
+	if (this->OutputProfile == 1)
+	{
+		if (std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+		{
+			// tauschen nur bei Nuance!
+			unsigned long long imgsize_0 = this->SpecHeader.imgsize[0];//x
+			unsigned long long imgsize_2 = this->SpecHeader.imgsize[2];//y
+
+			// tauschen:
+			this->SpecHeader.imgsize[0] = imgsize_2;
+			this->SpecHeader.imgsize[2] = imgsize_0;
+		};
+		this->ProfileLoaded = 1;
+		return 0;
+	};
+
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::loadProfile()");
+	return -1;
+};
+//
+int SpecIL_TGD::readFileHeader()
+{
+	// Datei oeffnen
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in | std::ifstream::binary);
+	if (ifs.fail() != 0)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_TGD::readFileHeader(): Konnte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		return -1;
+	};
+
+	char checkbuffer[] = { 'T', 'G', 'D', '!'};
+
+
+	//std::string line;
+	//std::getline(ifs, line);
+
+	char magic[4];
+	ifs.seekg(0, std::ios::beg);
+	ifs.read(magic, 4);
+
+	//if (line.find("TGD!") == 0)
+	if (*magic == *checkbuffer)
+	{
+
+		int numdim;
+		ifs.read((char*)&numdim, 4);
+		this->header_dimensions = numdim;
+
+		// x1
+		int dim1;
+		ifs.read((char*)&dim1, 4);
+		this->header_dims[0] = (unsigned int)dim1;
+
+		// x2
+		int dim2;
+		ifs.read((char*)&dim2, 4);
+		this->header_dims[1] = (unsigned int)dim2;
+
+		// x3
+		int dim3;
+		ifs.read((char*)&dim3, 4);
+		this->header_dims[2] = (unsigned int)dim3;
+
+		// die letzten 4 Byte sind der Datentyp
+		unsigned int dtype;
+		ifs.read((char*)&dtype, 4);
+		this->header_datatype = dtype;
+
+		this->header_headersize = 4 + 4 + 4 * (unsigned int)numdim + 4;
+
+		this->FileHeaderLoaded = 1;
+
+		ifs.close();
+		return 0;
+	};
+
+	ifs.close();
+	std::string emsg;
+	emsg = "In SpecIL_TGD::readFileHeader(): no TGD! magic word in file";
+	this->ErrorMsgLog(emsg);
+	return -1;
+};
+//
+int SpecIL_TGD::readMetaFile(std::string metafilename)
+{
+	std::ifstream ifs(metafilename.c_str(), std::ifstream::in | std::ifstream::binary);
+	if (ifs.fail() == 0)
+	{
+		// Erste Zeile lesen und pruefen, ob es sich um das richtige Meta-File handelt
+		std::string firstline;
+		std::getline(ifs, firstline);
+		if(firstline.find("datafilename") == 0)
+		{
+			unsigned int pos = firstline.find_first_of("=");
+			std::string checkfname = firstline.substr(pos + 2);
+			unsigned int len = checkfname.find("tgd");
+			checkfname = checkfname.substr(0, len+3);
+			unsigned int pos_last = this->SpecHeader.filename.find_last_of("/");
+			std::string fname = this->SpecHeader.filename.substr(pos_last + 1);
+
+			//if (std::strcmp(checkfname.c_str(), fname.c_str()) == 0)
+			//{
+				std::string line;
+				while (std::getline(ifs, line))
+				{
+					unsigned int pos_eq = line.find_first_of("=");
+					std::string keyword = line.substr(0, pos_eq);
+
+					// Kamera
+					if (std::strcmp("cameraname", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("\"");
+						std::string temp = line.substr(tpos + 1);
+						unsigned int tlen = temp.find_last_of("\"");
+						std::string cameraname = temp.substr(0, tlen);
+						this->meta_camera = cameraname;
+					};
+					// Sensorname
+					if (std::strcmp("sensor", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("\"");
+						std::string temp = line.substr(tpos + 1);
+						unsigned int tlen = temp.find_last_of("\"");
+						std::string sensoraname = temp.substr(0, tlen);
+						this->meta_sensor = sensoraname;
+					};
+					// Bit Tiefe
+					if (std::strcmp("bitdepth", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1);
+						std::stringstream ss(temp);
+						unsigned int  bit_depth = 0;
+						ss >> bit_depth;
+						this->meta_bitdepth = bit_depth;
+					};
+					// sensorwidth => x
+					if (std::strcmp("sensorheight", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1);
+						std::stringstream ss(temp);
+						unsigned int  sensor_height = 0;
+						ss >> sensor_height;
+						this->meta_sensorheight = sensor_height;
+					};
+					// sensorheight => y
+					if (std::strcmp("sensorwidth", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1);
+						std::stringstream ss(temp);
+						unsigned int  sensor_width = 0;
+						ss >> sensor_width;
+						this->meta_sensorwidth = sensor_width;
+					};
+					// Bildebenen => z
+					if (std::strcmp("planes", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1);
+						std::stringstream ss(temp);
+						unsigned int  tplanes = 0;
+						ss >> tplanes;
+						this->meta_planes = tplanes;
+					};
+					// Datentyp
+						// Hier muss noch eine Abfrage fuer den Datentyp rein
+						// es gibt noch ein Schluesselwort im .tgd.meta File!
+						// Hier den Datentyp speichern im t_SpecHead::t_data_type Format!!!!
+			//			this->meta_datatype = t_SpecHead::...;
+			//			this->meta_datatype_str = "...";
+					if (std::strcmp("datatype", keyword.c_str()) == 0)//auf die schnelle implementiert....
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1, 3);
+
+						if (temp.compare(std::string("BOOL")) == 0){
+							this->meta_datatype = t_SpecHead::DT_8_BYTE;
+							this->meta_datatype_str = "BOOL";
+						};
+						if (temp.compare(std::string("CHAR")) == 0){
+							this->meta_datatype = t_SpecHead::DT_8_BYTE;
+							this->meta_datatype_str = "CHAR";
+						};
+						if (temp.compare(std::string("SHORT")) == 0){
+							this->meta_datatype = t_SpecHead::DT_16_SINT;
+							this->meta_datatype_str = "SHORT";
+						};
+						if (temp.compare(std::string("USHORT")) == 0){
+							this->meta_datatype = t_SpecHead::DT_16_UINT;
+							this->meta_datatype_str = "USHORT";
+						};
+						if (temp.compare(std::string("INT")) == 0){
+							this->meta_datatype = t_SpecHead::DT_32_SLONG;
+							this->meta_datatype_str = "INT";
+						};
+						if (temp.compare(std::string("UINT")) == 0){
+							this->meta_datatype = t_SpecHead::DT_32_ULONG;
+							this->meta_datatype_str = "UINT";
+						};
+						if (temp.compare(std::string("LONG")) == 0){
+							this->meta_datatype = t_SpecHead::DT_32_SLONG;
+							this->meta_datatype_str = "LONG";
+						};
+						if (temp.compare(std::string("ULONG")) == 0){
+							this->meta_datatype = t_SpecHead::DT_32_ULONG;
+							this->meta_datatype_str = "ULONG";
+						};
+						if (temp.compare(std::string("FLOAT")) == 0){
+							this->meta_datatype = t_SpecHead::DT_32_FLOAT;
+							this->meta_datatype_str = "FLOAT";
+						};
+					};
+
+					// Anordnung im Cube
+					if (std::strcmp("interleave", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("=");
+						std::string temp = line.substr(tpos + 1, 3);
+
+						if (temp.compare(std::string("bil")) == 0){
+							this->meta_interleave = t_SpecHead::IL_BIL;
+						};
+						if (temp.compare(std::string("bsq")) == 0){
+							this->meta_interleave = t_SpecHead::IL_BSQ;
+						};
+						if (temp.compare(std::string("bip")) == 0){
+							this->meta_interleave = t_SpecHead::IL_BIP;
+						};
+					};
+					// Wellenlaengen
+					if (std::strcmp("wavelengths", keyword.c_str()) == 0)
+					{
+						unsigned int tpos = line.find_first_of("\"");
+						std::string temp = line.substr(tpos + 1);
+						unsigned int tlen = temp.find_last_of("\"");
+
+						std::string wavelen = temp.substr(0, tlen);
+						std::string buf;
+						buf.clear();
+
+						for (size_t i = 0; i<=wavelen.size(); ++i)
+						{
+							if (wavelen[i] == ' ' || i == wavelen.size())
+							{
+								if (buf.size()>0)
+								{
+									this->meta_wavelengths.push_back((float)atof(buf.c_str()));
+									buf.clear();
+								};
+							}
+							else
+							{
+								buf.push_back(wavelen[i]);
+							};
+						};
+					};
+				};
+
+				this->SelectedImgProperties = 1;
+
+				return 0;
+		//	};
+		};
+
+//		std::string emsg;
+//		emsg = "In SpecIL_TGD::readMetaFile(): Wrong TGD Meta-File " + metafilename + " for Image File: " + this->SpecHeader.filename.c_str();
+//		this->ErrorMsgLog(emsg);
+//		return -1;
+	};
+
+	std::string emsg;
+	emsg = "In SpecIL_TGD::readMetaFile(): Failed to open " + metafilename;
+	this->ErrorMsgLog(emsg);
+	return -1;
+}
+//
+void SpecIL_TGD::setImageProperties(const char* id, int width, int height, int planes, t_SpecHead::t_interleave il, t_SpecHead::t_data_type dt)
+{
+	// x
+	this->user_width = width;
+	// z
+	this->user_height = planes;
+	// y
+	this->user_planes = height;
+
+	// wichtigste zu den Daten
+	this->user_interleave = il;
+	this->user_datatype = dt;
+
+	//
+	this->SelectedImgProperties = 2;
+};
+//
+int SpecIL_TGD::readImageData()
+{
+	// Datei oeffnen
+	std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in | std::ifstream::binary);
+	if (ifs.fail() != 0)
+	{
+		std::string emsg;
+		emsg = "In SpecIL_TGD::readImageData(): Konnte Datei " + this->SpecHeader.filename + " nicht oeffnen";
+		this->ErrorMsgLog(emsg);
+		return -1;
+	};
+
+	char checkbuffer[] = { 'T', 'G', 'D', '!' };
+
+
+	//std::string line;
+	//std::getline(ifs, line);
+
+	char magic[4];
+	ifs.seekg(0, std::ios::beg);
+	ifs.read(magic, 4);
+
+	//if (line.find("TGD!") == 0 && this->FileDataLoaded == 0)
+	if (*magic == *checkbuffer && this->FileDataLoaded == 0)	
+	{
+		// Groesse der Datei ermitteln
+		ifs.seekg(0, ifs.end);
+		unsigned long long filesize = ifs.tellg();
+		ifs.seekg(0, ifs.beg);
+
+		// bis ca 1GB erlaubt, dann auf Datei arbeiten!
+		// Das muss hier noch huebscher geregelt werden
+//		if (((filesize - this->SpecHeader.headsize) < this->cubemaxsize) && this->ReadOnlyFromHDD == 0)
+		if (((filesize - ((unsigned long long)this->SpecHeader.headsize)) < this->cubemaxsize) && this->ReadOnlyFromHDD == 0)
+		{
+			// Buffergroesse bestimmen
+			unsigned long long imagedatesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2];
+
+			// Buffer allokieren
+			try{
+				this->SpecHeader.imgcube = static_cast<void*>(new char[imagedatesize]);
+			}
+			catch (const std::bad_alloc&)
+			{
+				ifs.close();
+				delete[] this->SpecHeader.imgcube;
+				this->ErrorMsgLog(std::string("In SpecIL_TGD::readImageData(): std::bad_alloc -> Datei zu groß fuer Speicher"));
+
+				this->SpecHeader.imgcube = NULL;
+				this->SpecHeader.type = 2;
+
+				return -1;
+			};
+
+			// Vom Filestream in der Buffer schreiben
+			ifs.seekg(this->SpecHeader.headsize, ifs.beg);
+			ifs.read(static_cast< char* >(this->SpecHeader.imgcube), imagedatesize);
+
+			// Check Failbits
+			if (ifs.eof())
+			{
+				this->ErrorMsgLog(std::string("In SpecIL_TGD::readImageData(): ifs.eof() == true ! -> End-of-File reached on input operation"));
+				ifs.close();
+				delete[] this->SpecHeader.imgcube;
+				return -1;
+			};
+			if (ifs.bad())
+			{
+				this->ErrorMsgLog(std::string("In SpecIL_TGD::readImageData(): ifs.bad() == true ! -> Read-writing error on i-o operation or Logical error on i-o operation !"));
+				ifs.close();
+				delete[] this->SpecHeader.imgcube;
+				return -1;
+			};
+
+			this->SpecHeader.type = 1;
+		}
+		else
+		{
+			// Cube nicht geladen
+			this->SpecHeader.type = 2;
+		};
+		this->FileDataLoaded = 1;
+		ifs.close();
+		return 0;
+	};
+
+	ifs.close();
+
+	std::string emsg;
+	emsg = "In SpecIL_TGD::readImageData(): no TGD! magic word in file";
+	this->ErrorMsgLog(emsg);
+	return -1;
+};
+//
+int SpecIL_TGD::read()
+{
+	// .tdg Header einlesen
+	if (this->FileHeaderLoaded != 1)
+	{
+		if (this->readFileHeader() != 0)
+		{
+			std::string emsg;
+			emsg = "In SpecIL_TGD::read(): Failed to read file header!";
+			this->ErrorMsgLog(emsg);
+			return -1;
+		};
+	};
+	// Sind manuell eingegebne Bildinformationen vorhanden?
+	// Wenn ja, wird Header und .tgd.meta ignoriert!
+	if (this->SelectedImgProperties < 2)
+	{
+		// .tgd Header Werte uebernehmen!
+		this->SpecHeader.imgsize[0] = (unsigned long long) this->header_dims[0];	// width	-> x - spatial (samples)
+		this->SpecHeader.imgsize[1] = (unsigned long long) this->header_dims[1];	// planes	-> z - spectral	(bands)
+		this->SpecHeader.imgsize[2] = (unsigned long long) this->header_dims[2];	// height	-> y - frame (lines)
+
+	//	this->header_datatype = 512;// HySpex .tgd soll wohl IMMER float sein!
+		//Leider gab es schon .tgd Dateien die im Header was anderes stehen hatte.
+
+		// Datentyp von .tgd Header schon mal uebernehmen
+
+		// Die Datentypen sind angepasst an die 4 Byte großen Pixel
+		// ist noch eine Anpassung evtl. erforderlich
+		switch (this->header_datatype)
+		{
+		case 1: // BOOL
+			this->SpecHeader.data_type = t_SpecHead::DT_8_BYTE;
+			this->SpecHeader.bitdepth = 8;
+			this->SpecHeader.data_type_str = "BOOL";
+			break;
+
+		case 2: // CHAR
+			this->SpecHeader.data_type = t_SpecHead::DT_8_BYTE;
+			this->SpecHeader.bitdepth = 8;
+			this->SpecHeader.data_type_str = "CHAR";
+			break;
+
+		case 4: // UCHAR + BYTE
+			this->SpecHeader.data_type = t_SpecHead::DT_8_BYTE;
+			this->SpecHeader.bitdepth = 8;
+			this->SpecHeader.data_type_str = "BYTE"; // or UCHAR
+			break;
+
+		case 8: // SHORT
+			this->SpecHeader.data_type = t_SpecHead::DT_16_SINT;
+			this->SpecHeader.bitdepth = 16;
+			this->SpecHeader.data_type_str = "SHORT";
+			break;
+
+		case 16: //USHORT
+			this->SpecHeader.data_type = t_SpecHead::DT_16_UINT;
+			this->SpecHeader.bitdepth = 16;
+			this->SpecHeader.data_type_str = "USHORT";
+			break;
+
+		case 32: // INT
+			this->SpecHeader.data_type = t_SpecHead::DT_32_SLONG;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "INT";
+			break;
+
+		case 64: // UINT
+			this->SpecHeader.data_type = t_SpecHead::DT_32_ULONG;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "UINT";
+			break;
+
+		case 128: // LONG
+			this->SpecHeader.data_type = t_SpecHead::DT_32_SLONG;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "LONG";
+			break;
+
+		case 256: // ULONG
+			this->SpecHeader.data_type = t_SpecHead::DT_32_ULONG;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "ULONG";
+			break;
+
+		case 512: // FLOAT
+			this->SpecHeader.data_type = t_SpecHead::DT_32_FLOAT;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "FLOAT";
+			break;
+
+		default:
+			/*this->SpecHeader.data_type = t_SpecHead::DT_UNKNOWN;
+			this->SpecHeader.bitdepth = 0;
+			this->SpecHeader.data_type_str = "UNKNOWN";*/
+			this->SpecHeader.data_type = t_SpecHead::DT_32_FLOAT;
+			this->SpecHeader.bitdepth = 32;
+			this->SpecHeader.data_type_str = "FLOAT";
+			std::string emsg;
+			emsg = "WARNING! In SpecIL_TGD::read(): Assuming HySpex file with data_type = 32Bit float!";
+			this->ErrorMsgLog(emsg);
+			break;
+		};
+
+		// Sehr unschoene Bestimmung von BSQ, BIL oder BIP (erstmal raus genommen, wenn keine meta vorhanden, dann wird bil weiter unten gesetzt!):
+		/*// Bei Nuance ist die Sensorbreite immer 1392 Pixe = > x-Achse
+		if (this->header_dims[0] == 1392)
+		{
+			// Ist Nuance ?
+			this->SpecHeader.ID = "CRi 12-bit digital camera";
+			// Anordnung war bis jetzt immer BSQ
+			this->SpecHeader.interleave = t_SpecHead::IL_BSQ;
+
+			// Dimensionen aendern
+			// x1 -> x
+			this->SpecHeader.imgsize[0] = (unsigned long long) this->header_dims[0];
+			// x2 -> y
+			this->SpecHeader.imgsize[1] = (unsigned long long) this->header_dims[2];
+			// x3 -> z
+			this->SpecHeader.imgsize[2] = (unsigned long long) this->header_dims[1];
+		};
+
+		// HySpex SWIR und VNIR haben immer eine samplesize von 320 Pixel
+		if (this->header_dims[0] == 320)
+		{
+			// Ist HySpex ?
+			this->SpecHeader.ID = "HySpex";
+			// Anordnung
+			this->SpecHeader.interleave = t_SpecHead::IL_BIL;
+		};*/
+
+		// Wenn .tgd.meta Daten vorhanden, dann uebernehmen!
+		// Meta-File einlesen
+		std::string metafilename;
+		metafilename = this->SpecHeader.filename + ".meta";
+		if (this->readMetaFile(metafilename) != 0)
+		{
+			std::string emsg;
+			emsg = "WARNING! In SpecIL_TGD::read(): Failed to read .tgd.meta file!";
+			this->ErrorMsgLog(emsg);
+		}
+		else
+		{
+			// .tgd.meta Werte uebernehmen!
+			if (this->meta_sensorwidth != 0)
+			{
+				this->SpecHeader.imgsize[0] = this->meta_sensorwidth;	//spatial (samples) (x)
+			};
+			if (this->meta_planes != 0)
+			{
+				this->SpecHeader.imgsize[1] = this->meta_planes;		//spectral	(bands)	(z)
+			};
+			if (this->meta_sensorheight != 0)
+			{
+				this->SpecHeader.imgsize[2] = this->meta_sensorheight;	//frame(lines)		(y)
+			};
+
+			// Bittiefe
+			if (this->meta_bitdepth != 0)
+			{
+				this->SpecHeader.bitdepth = this->meta_bitdepth;
+			};
+
+			// Kameraname (falls vorhanden)
+			if (this->meta_camera.size() > 0)
+			{
+				this->SpecHeader.ID = this->meta_camera;
+
+				if (this->meta_camera == "CRi 12-bit digital camera")
+				{
+					this->SpecHeader.interleave = t_SpecHead::IL_BSQ;
+				};
+
+			};
+
+			// Wellenlaengen (falls vorhanden)
+			if (this->meta_wavelengths.size() > 0)
+			{
+				this->SpecHeader.wavelen = this->meta_wavelengths;
+				this->SpecHeader.wavelenunit = "nm";
+			};
+
+			// Datentyp
+			if (this->meta_datatype != t_SpecHead::DT_UNKNOWN)
+			{
+				this->SpecHeader.data_type = this->meta_datatype;
+				this->SpecHeader.data_type_str = meta_datatype_str;
+			};
+
+			// Anordnung
+			if (this->meta_interleave != t_SpecHead::IL_UNKNOWN)
+			{
+				this->SpecHeader.interleave = this->meta_interleave;
+			};
+		};
+	}
+	else
+	{
+		// Manuelle Werte uebernehmen!
+		this->SpecHeader.data_type	= this->user_datatype;
+		this->SpecHeader.interleave	= this->user_interleave;
+		this->SpecHeader.imgsize[0] = this->user_width;
+		this->SpecHeader.imgsize[1] = this->user_planes;		
+		this->SpecHeader.imgsize[2] = this->user_height;
+		this->SpecHeader.ID			= this->user_camera;
+	};
+
+	// Headergroesse aus .tgd !
+	this->SpecHeader.headsize		= this->header_headersize;
+	// Anzahl der Dimensionen aus .tgd ! (Falls es wichtig ist)
+	this->SpecHeader.numdim			= this->header_dimensions;
+
+	// Letzten SpecHeader Informationen setzen:
+	this->SpecHeader.pixelsize		= 4;// Bei .tgd ist die Pixelgroesse IMMER 4 Byte !!!
+	this->SpecHeader.type			= 2;// Cube (noch) nicht geladen
+
+	this->setDataTypeMaxMin();
+
+	// ACHTUNG!
+	// Wenn nichts weiter bekannt, wird erstmal angenommen, dass es sich um eine HySpexDatei in der tgd handelt und diese sind immer bil!
+	if (this->SpecHeader.interleave == t_SpecHead::IL_UNKNOWN)
+	{
+		this->SpecHeader.interleave = t_SpecHead::IL_BIL;
+		std::string emsg;
+		emsg = "WARNING! In SpecIL_TGD::read(): Assuming HySpex file with interleave = bil !";
+		this->ErrorMsgLog(emsg);
+
+	};
+
+	// Bilddaten oeffnen und lesen
+	if(this->FileDataLoaded == 0)
+	{
+		if(this->readImageData() != 0)
+		{
+			std::string emsg;
+			emsg = "In SpecIL_TGD::read(): Failed to load .tgd image data!";
+			this->ErrorMsgLog(emsg);
+			return -1;
+		};
+	};
+
+	// Profil laden...
+	if (this->OutputProfile != 0)
+	{
+		this->loadProfile();
+	};
+
+	return 0;
+};
+//
+/*int SpecIL_TGD::getPlane(void* plane, int x, int y, int z)
+{
+	// wurde read() ausgefuehrt ?
+	if (this->SpecHeader.type == 0)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_TGD::getPlane(): SpecHeader.type == 0, Data was not read! Run read()!");
+		return -1;
+	};
+	// Ein Band ausgeben
+	if (x < 0 && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+
+//H		this->getPlane_Band(plane, x, y, z);
+		return 0;
+	};
+	// Einen Frame ausgeben
+	if (x < 0 && z < 0 && y < this->SpecHeader.imgsize[2])
+	{
+//H		this->getPlane_Frame(plane, x, y, z);
+		return 0;
+	};
+	// Ein Samplebild ausgeben
+	if (y < 0 && z < 0 && x < this->SpecHeader.imgsize[0])
+	{
+//H		this->getPlane_Sample(plane, x, y, z);
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::getPlane(): Invalid parameters");
+	return -1;
+};*/
+//
+int SpecIL_TGD::getVector(void* vector, int x, int y, int z)
+{
+	// x - Vektor
+	if (x < 0 && y < this->SpecHeader.imgsize[2] && z < this->SpecHeader.imgsize[1])
+	{
+		this->getVector_X(vector, y, z);
+		return 0;
+	};
+	// y - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		this->getVector_Y(vector, x, z);
+		return 0;
+	};
+	// z - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < this->SpecHeader.imgsize[2] && z < 0)
+	{
+		this->getVector_Z(vector, x, y);
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::getVector(): Invalid parameters");
+	return -1;
+};
+//
+int SpecIL_TGD::getPoint(void* point, int x, int y, int z)
+{
+	this->SpecHeader.type = 2;
+
+
+	if (this->OutputProfile == 0 || (this->OutputProfile == 1 && std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0))
+	{
+		this->SpecIL_Base::getPoint(point, x, y, z);
+		return 0;
+	};
+	if (this->OutputProfile == 1 && std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+	{
+		this->getPoint_N(point, x, y, z);
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::getPoint(): Invalid parameters");
+	return -1;
+};
+//
+/*
+int SpecIL_TGD::write(std::string outfile)
+{
+std::string endung = outfile.substr(outfile.find_last_of(".")+1);
+
+if( endung == "tgd")
+{
+// Daten als .tgd speichern
+this->writeDataToTGDfile(outfile);
+
+std::string outhdrfile = outfile.substr(0, outfile.find_last_of("."));
+outhdrfile = outhdrfile + ".hdr";
+this->writeENVIhdr(outhdrfile);
+
+return 0;
+};
+
+if( endung == "img" || endung == "bin")
+{
+// Daten als .img oder .bin speichern
+this->writeDataToHySpexFile(outfile);
+
+std::string outhdrfile = outfile.substr(0, outfile.find_last_of("."));
+outhdrfile = outhdrfile + ".hdr";
+this->writeENVIhdr(outhdrfile);
+
+return 0;
+};
+// Err
+this->ErrorMsgLog("In SpecIL_TGD::write(): no support for " + endung + " extension!");
+return -1;
+};
+//*/
+//
+void SpecIL_TGD::setDataTypeMaxMin()
+{
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE && this->SpecHeader.data_type_str == "BYTE" || this->SpecHeader.data_type_str == "UCHAR")
+	{
+		this->SpecHeader.data_type_maxval = 255.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE && this->SpecHeader.data_type_str == "CHAR")
+	{
+		this->SpecHeader.data_type_maxval = 127.0;
+		this->SpecHeader.data_type_minval = -128.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE && this->SpecHeader.data_type_str == "BOOL")
+	{
+		this->SpecHeader.data_type_maxval = 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_SINT)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 15) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 15);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 16) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 31) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 31);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT || this->SpecHeader.data_type == t_SpecHead::DT_2x32_COMPLEX)
+	{
+		this->SpecHeader.data_type_maxval = FLT_MAX;
+		this->SpecHeader.data_type_minval = FLT_MIN;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 32) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_UNKNOWN)
+	{
+		this->SpecHeader.data_type_maxval = 0.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	/*if (this->SpecHeader.data_type == t_SpecHead::DT_64_DOUBLE || this->SpecHeader.data_type == t_SpecHead::DT_2x64_COMPLEX)
+	{
+		this->SpecHeader.data_type_maxval = DBL_MAX;
+		this->SpecHeader.data_type_minval = DBL_MIN;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_SLONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 63) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 63);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_ULONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 64) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+	//*/
+};
+//
+/*int SpecIL_TGD::getPlane(void* plane, int x, int y, int z)
+{
+	// wurde read() ausgefuehrt ?
+	if (this->SpecHeader.type == 0)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_TGD::getPlane(): SpecHeader.type == 0, Data was not read! Run read()!");
+		return -1;
+	};
+	// Ein Band ausgeben
+	if (x < 0 && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		// RAW
+		if (this->OutputProfile == 0)
+		{
+			//H			this->getPlane_Band(plane, x, y, z);
+			return 0;
+		};
+		// C-Workflow
+		if (this->OutputProfile == 1)
+		{
+			if (std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+			{
+				if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)// DIe BIL und BIP implementierungen ín dieser Methode passen aber nicht
+				{
+					//H					this->getPlane_Band(plane, y, x, z);
+					return 0;
+				};
+			};
+
+			if (std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0)
+			{
+				this->getPlane_Band_CWF(plane, x, y, z);
+				return 0;
+			};
+
+			this->ErrorMsgLog("In SpecIL_TGD::getPlane(): Invalid cameraname !");
+			return -1;
+		};
+	};
+	// Einen Frame ausgeben
+	if (x < 0 && z < 0 && y < this->SpecHeader.imgsize[2])
+	{
+		// RAW
+		if (this->OutputProfile == 0)
+		{
+			//H			this->getPlane_Frame(plane, x, y, z);
+		};
+		// C-Workflow
+		if (this->OutputProfile == 1)
+		{
+			if (std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+			{
+				this->getPlane_Frame_NCWF(plane, x, y, z);
+				return 0;
+			};
+
+			if (std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0)
+			{
+				//H				this->getPlane_Frame(plane, x, y, z);
+				return 0;
+			};
+
+			this->ErrorMsgLog("In SpecIL_TGD::getPlane(): Invalid cameraname !");
+			return -1;
+		};
+		return 0;
+	};
+	// Ein Samplebild ausgeben
+	if (y < 0 && z < 0 && x < this->SpecHeader.imgsize[0])
+	{
+		// RAW
+		if (this->OutputProfile == 0)
+		{
+			//H			this->getPlane_Sample(plane, x, y, z);
+		};
+		// C-Workflow
+		if (this->OutputProfile == 1)
+		{
+			if (std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+			{
+				this->getPlane_Sample_NCWF(plane, x, y, z);
+				return 0;
+			};
+
+			if (std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0)
+			{
+				//H				this->getPlane_Frame(plane, x, y, z);
+				return 0;
+			};
+
+			this->ErrorMsgLog("In SpecIL_TGD::getPlane(): Invalid cameraname !");
+			return -1;
+		};
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::getPlane(): Invalid parameters");
+	return -1;
+};*/
+//
+/*int SpecIL_TGD::getVector(void* vector, int x, int y, int z)
+{
+	char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+	// x - Vektor
+	if (x < 0 && y < this->SpecHeader.imgsize[2] && z < this->SpecHeader.imgsize[1])
+	{
+		if (this->OutputProfile == 0 || (this->OutputProfile == 1 && std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0))
+		{
+			this->getVector_X(vector, y, z);
+			return 0;
+		};
+		if (this->OutputProfile == 1 && std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+		{
+			this->getVector_NX(vector, y, z);
+			return 0;
+		};
+	};
+	// y - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		if (this->OutputProfile == 0 || (this->OutputProfile == 1 && std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0))
+		{
+			this->getVector_Y(vector, x, z);
+			return 0;
+		};
+		if (this->OutputProfile == 1 && std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+		{
+			this->getVector_NY(vector, x, z);
+			return 0;
+		};
+	};
+	// z - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < this->SpecHeader.imgsize[2] && z < 0)
+	{
+		if (this->OutputProfile == 0 || (this->OutputProfile == 1 && std::strcmp("HySpex", this->SpecHeader.ID.c_str()) == 0))
+		{
+			this->getVector_Z(vector, x, y);
+			return 0;
+		};
+		if (this->OutputProfile == 1 && std::strcmp("CRi 12-bit digital camera", this->SpecHeader.ID.c_str()) == 0)
+		{
+			this->getVector_NZ(vector, x, y);
+			return 0;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_TGD::getVector(): Invalid parameters");
+	return -1;
+};*/

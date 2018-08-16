@@ -1,0 +1,72 @@
+#include "SpecIL_Interface.h"
+#include "SpecIL_Base.h"
+
+// Unterstuetzte Datentypen
+#include "SpecIL_HySpex.h"
+#include "SpecIL_Nuance.h"
+#include "SpecIL_TGD.h"
+
+#include <string>
+#include <fstream>
+
+SpecIL_Interface* SpecIL_Interface::open(const char* cstr_filename)
+{
+	std::string filename(cstr_filename);
+
+	// Dateiendung bestimmen
+	std::string endung = filename.substr(filename.find_last_of("."));
+
+	// Entscheidung welche Art von Daten -> entsprechende Klasse verwenden
+	if( 0 == endung.compare(".img") || 0 == endung.compare(".bin") ) // .bin support?
+	{
+		// HySpex
+		SpecIL_HySpex* SpecData = new SpecIL_HySpex;
+
+		SpecData->getHeaderPointer()->filename = filename;
+
+		SpecData->readFileHeader();
+
+		return SpecData;
+	};
+
+	if (0==endung.compare(".im3"))
+	{
+		// Nuance
+		SpecIL_Nuance* SpecData = new SpecIL_Nuance;
+
+		SpecData->getHeaderPointer()->filename = filename;
+
+		SpecData->readFileHeader();
+
+		return SpecData;
+	};
+	
+	if (0==endung.compare(".tgd"))
+	{
+		SpecIL_TGD* SpecData = new SpecIL_TGD;
+
+		SpecData->getHeaderPointer()->filename = filename;
+
+		SpecData->readFileHeader();
+
+		return SpecData;
+	};
+
+/*	if (0==endung.compare(".mat"))
+	{
+		// Matlab Datei
+
+		// to do...
+		// Es gibt eine cpp lib von matlab, die dafuer gedacht ist.
+	};
+*/
+	// Fehler: Dateiendung nicht kompatibel
+	// Logdatei
+	size_t len = filename.find_last_of(".");
+	std::string logfile = filename.substr(0, len);
+	logfile = logfile + "_SpecIL_ERROR_LOG" + ".txt";
+	std::fstream fsError(logfile, std::fstream::out | std::fstream::app);
+	fsError << "The Fileformat " << endung << " is not supported by SpecIL!" << std::endl;
+	fsError.close();
+	return false;
+};

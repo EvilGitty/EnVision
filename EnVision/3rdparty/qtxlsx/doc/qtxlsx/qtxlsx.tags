@@ -1,0 +1,2919 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tagfile>
+    <compound kind="class">
+        <name>AbstractSheet</name>
+        <filename>abstractsheet.html</filename>
+        <member kind="enum">
+            <name>SheetType</name>
+            <anchor>SheetType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ST_WorkSheet">
+            <anchor>SheetType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ST_ChartSheet">
+            <anchor>SheetType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ST_DialogSheet">
+            <anchor>SheetType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ST_MacroSheet">
+            <anchor>SheetType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>SheetState</name>
+            <anchor>SheetState-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="SS_Visible">
+            <anchor>SheetState-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="SS_Hidden">
+            <anchor>SheetState-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="SS_VeryHidden">
+            <anchor>SheetState-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>sheetName</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>sheetName</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>SheetType</type>
+            <name>sheetType</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>sheetType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>SheetState</type>
+            <name>sheetState</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>sheetState</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setSheetState</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>setSheetState</anchor>
+            <arglist>(SheetState state)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isHidden</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>isHidden</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isVisible</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>isVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setHidden</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>setHidden</anchor>
+            <arglist>(bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setVisible</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>setVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Workbook *</type>
+            <name>workbook</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>workbook</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="protected" virtual="pure" static="no">
+            <type>virtual AbstractSheet *</type>
+            <name>copy</name>
+            <anchorfile>abstractsheet.html</anchorfile>
+            <anchor>copy</anchor>
+            <arglist>(const QString &amp;distName, int distId) const = 0</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Cell</name>
+        <filename>cell.html</filename>
+        <member kind="enum">
+            <name>CellType</name>
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BooleanType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="NumberType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ErrorType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="SharedStringType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="StringType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="InlineStringType">
+            <anchor>CellType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellType</type>
+            <name>cellType</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>cellType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>value</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>value</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>format</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>format</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>hasFormula</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>hasFormula</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellFormula</type>
+            <name>formula</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>formula</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isDateTime</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>isDateTime</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QDateTime</type>
+            <name>dateTime</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>dateTime</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRichString</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>isRichString</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Cell</name>
+            <anchorfile>cell.html</anchorfile>
+            <anchor>dtor.Cell</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>CellFormula</name>
+        <filename>cellformula.html</filename>
+        <member kind="enum">
+            <name>FormulaType</name>
+            <anchor>FormulaType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="NormalType">
+            <anchor>FormulaType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="ArrayType">
+            <anchor>FormulaType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="DataTableType">
+            <anchor>FormulaType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="SharedType">
+            <anchor>FormulaType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>CellFormula</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>CellFormula-2</anchor>
+            <arglist>(const char *formula, FormulaType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>CellFormula-3</anchor>
+            <arglist>(const QString &amp;formula, FormulaType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>CellFormula-4</anchor>
+            <arglist>(const QString &amp;formula, const CellRange &amp;ref, FormulaType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>CellFormula-5</anchor>
+            <arglist>(const CellFormula &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~CellFormula</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>dtor.CellFormula</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellFormula &amp;</type>
+            <name>operator=</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>operator-eq</anchor>
+            <arglist>(const CellFormula &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isValid</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>isValid</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>FormulaType</type>
+            <name>formulaType</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>formulaType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>formulaText</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>formulaText</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellRange</type>
+            <name>reference</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>reference</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>sharedIndex</name>
+            <anchorfile>cellformula.html</anchorfile>
+            <anchor>sharedIndex</anchor>
+            <arglist>() const</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Chart</name>
+        <filename>chart.html</filename>
+        <member kind="enum">
+            <name>ChartType</name>
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Area">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Area3D">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Line">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Line3D">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Stock">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Radar">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Scatter">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Pie">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Pie3D">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Doughnut">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Bar">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Bar3D">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_OfPie">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Surface">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Surface3D">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="CT_Bubble">
+            <anchor>ChartType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Chart</name>
+            <anchorfile>chart.html</anchorfile>
+            <anchor>dtor.Chart</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addSeries</name>
+            <anchorfile>chart.html</anchorfile>
+            <anchor>addSeries</anchor>
+            <arglist>(const CellRange &amp;range, AbstractSheet *sheet)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setChartType</name>
+            <anchorfile>chart.html</anchorfile>
+            <anchor>setChartType</anchor>
+            <arglist>(ChartType type)</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Chartsheet</name>
+        <filename>chartsheet.html</filename>
+        <base>AbstractSheet</base>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Chartsheet</name>
+            <anchorfile>chartsheet.html</anchorfile>
+            <anchor>dtor.Chartsheet</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Chart *</type>
+            <name>chart</name>
+            <anchorfile>chartsheet.html</anchorfile>
+            <anchor>chart</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>ConditionalFormatting</name>
+        <filename>conditionalformatting.html</filename>
+        <member kind="enum">
+            <name>HighlightRuleType</name>
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_LessThan">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_LessThanOrEqual">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Equal">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_NotEqual">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_GreaterThanOrEqual">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_GreaterThan">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Between">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_NotBetween">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_ContainsText">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_NotContainsText">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BeginsWith">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_EndsWith">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_TimePeriod">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Duplicate">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Unique">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Blanks">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_NoBlanks">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Errors">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_NoErrors">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Top">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_TopPercent">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Bottom">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BottomPercent">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_AboveAverage">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_AboveOrEqualAverage">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_AboveStdDev1">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_AboveStdDev2">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_AboveStdDev3">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BelowAverage">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BelowOrEqualAverage">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BelowStdDev1">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BelowStdDev2">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_BelowStdDev3">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Highlight_Expression">
+            <anchor>HighlightRuleType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>ValueObjectType</name>
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Formula">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Max">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Min">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Num">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Percent">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="VOT_Percentile">
+            <anchor>ValueObjectType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>ConditionalFormatting</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>ConditionalFormatting</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>ConditionalFormatting</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>ConditionalFormatting-2</anchor>
+            <arglist>(const ConditionalFormatting &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~ConditionalFormatting</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>dtor.ConditionalFormatting</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addHighlightCellsRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addHighlightCellsRule-2</anchor>
+            <arglist>(HighlightRuleType type, const Format &amp;format, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addHighlightCellsRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addHighlightCellsRule-3</anchor>
+            <arglist>(HighlightRuleType type, const QString &amp;formula, const Format &amp;format, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addHighlightCellsRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addHighlightCellsRule</anchor>
+            <arglist>(HighlightRuleType type, const QString &amp;formula1, const QString &amp;formula2, const Format &amp;format, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addDataBarRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addDataBarRule-2</anchor>
+            <arglist>(const QColor &amp;color, bool showData, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addDataBarRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addDataBarRule</anchor>
+            <arglist>(const QColor &amp;color, ValueObjectType type1, const QString &amp;val1, ValueObjectType type2, const QString &amp;val2, bool showData, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>add2ColorScaleRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>add2ColorScaleRule</anchor>
+            <arglist>(const QColor &amp;minColor, const QColor &amp;maxColor, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>add3ColorScaleRule</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>add3ColorScaleRule</anchor>
+            <arglist>(const QColor &amp;minColor, const QColor &amp;midColor, const QColor &amp;maxColor, bool stopIfTrue)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QList&lt;CellRange&gt;</type>
+            <name>ranges</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>ranges</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addCell</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addCell</anchor>
+            <arglist>(const CellReference &amp;cell)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addCell</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addCell-2</anchor>
+            <arglist>(int row, int col)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addRange</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addRange-2</anchor>
+            <arglist>(int firstRow, int firstCol, int lastRow, int lastCol)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addRange</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>addRange</anchor>
+            <arglist>(const CellRange &amp;range)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>ConditionalFormatting &amp;</type>
+            <name>operator=</name>
+            <anchorfile>conditionalformatting.html</anchorfile>
+            <anchor>operator-eq</anchor>
+            <arglist>(const ConditionalFormatting &amp;other)</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>DataValidation</name>
+        <filename>datavalidation.html</filename>
+        <member kind="enum">
+            <name>ValidationType</name>
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="None">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Whole">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Decimal">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="List">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Date">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Time">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="TextLength">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Custom">
+            <anchor>ValidationType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>ValidationOperator</name>
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Between">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="NotBetween">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Equal">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="NotEqual">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="LessThan">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="LessThanOrEqual">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="GreaterThan">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="GreaterThanOrEqual">
+            <anchor>ValidationOperator-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>ErrorStyle</name>
+            <anchor>ErrorStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Stop">
+            <anchor>ErrorStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Warning">
+            <anchor>ErrorStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="Information">
+            <anchor>ErrorStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>DataValidation</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>DataValidation</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>DataValidation</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>DataValidation-2</anchor>
+            <arglist>(ValidationType type, ValidationOperator op, const QString &amp;formula1, const QString &amp;formula2, bool allowBlank)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>DataValidation</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>DataValidation-3</anchor>
+            <arglist>(const DataValidation &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~DataValidation</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>dtor.DataValidation</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>ValidationType</type>
+            <name>validationType</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>validationType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>ValidationOperator</type>
+            <name>validationOperator</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>validationOperator</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>ErrorStyle</type>
+            <name>errorStyle</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>errorStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>formula1</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>formula1</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>formula2</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>formula2</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>allowBlank</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>allowBlank</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>errorMessage</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>errorMessage</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>errorMessageTitle</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>errorMessageTitle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>promptMessage</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>promptMessage</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>promptMessageTitle</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>promptMessageTitle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isPromptMessageVisible</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>isPromptMessageVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isErrorMessageVisible</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>isErrorMessageVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QList&lt;CellRange&gt;</type>
+            <name>ranges</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>ranges</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setValidationType</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setValidationType</anchor>
+            <arglist>(ValidationType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setValidationOperator</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setValidationOperator</anchor>
+            <arglist>(ValidationOperator op)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setErrorStyle</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setErrorStyle</anchor>
+            <arglist>(ErrorStyle es)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFormula1</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setFormula1</anchor>
+            <arglist>(const QString &amp;formula)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFormula2</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setFormula2</anchor>
+            <arglist>(const QString &amp;formula)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setErrorMessage</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setErrorMessage</anchor>
+            <arglist>(const QString &amp;error, const QString &amp;title)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setPromptMessage</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setPromptMessage</anchor>
+            <arglist>(const QString &amp;prompt, const QString &amp;title)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setAllowBlank</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setAllowBlank</anchor>
+            <arglist>(bool enable)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setPromptMessageVisible</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setPromptMessageVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setErrorMessageVisible</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>setErrorMessageVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addCell</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>addCell</anchor>
+            <arglist>(const CellReference &amp;cell)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addCell</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>addCell-2</anchor>
+            <arglist>(int row, int col)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addRange</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>addRange-2</anchor>
+            <arglist>(int firstRow, int firstCol, int lastRow, int lastCol)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addRange</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>addRange</anchor>
+            <arglist>(const CellRange &amp;range)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>DataValidation &amp;</type>
+            <name>operator=</name>
+            <anchorfile>datavalidation.html</anchorfile>
+            <anchor>operator-eq</anchor>
+            <arglist>(const DataValidation &amp;other)</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Document</name>
+        <filename>document.html</filename>
+        <base>QObject</base>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>Document</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>Document</anchor>
+            <arglist>(QObject *parent)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>Document</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>Document-2</anchor>
+            <arglist>(const QString &amp;name, QObject *parent)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>Document</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>Document-3</anchor>
+            <arglist>(QIODevice *device, QObject *parent)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Document</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>dtor.Document</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>write</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>write-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QVariant &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>write</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>write</anchor>
+            <arglist>(int row, int col, const QVariant &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>read</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>read-2</anchor>
+            <arglist>(const CellReference &amp;cell) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>read</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>read</anchor>
+            <arglist>(int row, int col) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>insertImage</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>insertImage</anchor>
+            <arglist>(int row, int column, const QImage &amp;image)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Chart *</type>
+            <name>insertChart</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>insertChart</anchor>
+            <arglist>(int row, int col, const QSize &amp;size)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>mergeCells</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>mergeCells</anchor>
+            <arglist>(const CellRange &amp;range, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>unmergeCells</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>unmergeCells</anchor>
+            <arglist>(const CellRange &amp;range)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnWidth</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnWidth</anchor>
+            <arglist>(const CellRange &amp;range, double width)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnFormat</anchor>
+            <arglist>(const CellRange &amp;range, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnHidden</anchor>
+            <arglist>(const CellRange &amp;range, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnWidth</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnWidth-2</anchor>
+            <arglist>(int column, double width)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnFormat-2</anchor>
+            <arglist>(int column, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnHidden-2</anchor>
+            <arglist>(int column, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnWidth</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnWidth-3</anchor>
+            <arglist>(int colFirst, int colLast, double width)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnFormat-3</anchor>
+            <arglist>(int colFirst, int colLast, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setColumnHidden-3</anchor>
+            <arglist>(int colFirst, int colLast, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>double</type>
+            <name>columnWidth</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>columnWidth</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>columnFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>columnFormat</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isColumnHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>isColumnHidden</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHeight</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowHeight</anchor>
+            <arglist>(int row, double height)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowFormat</anchor>
+            <arglist>(int row, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowHidden</anchor>
+            <arglist>(int row, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHeight</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowHeight-2</anchor>
+            <arglist>(int rowFirst, int rowLast, double height)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowFormat-2</anchor>
+            <arglist>(int rowFirst, int rowLast, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setRowHidden-2</anchor>
+            <arglist>(int rowFirst, int rowLast, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>double</type>
+            <name>rowHeight</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>rowHeight</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>rowFormat</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>rowFormat</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRowHidden</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>isRowHidden</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>groupRows</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>groupRows</anchor>
+            <arglist>(int rowFirst, int rowLast, bool collapsed)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>groupColumns</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>groupColumns</anchor>
+            <arglist>(int colFirst, int colLast, bool collapsed)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addDataValidation</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>addDataValidation</anchor>
+            <arglist>(const DataValidation &amp;validation)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addConditionalFormatting</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>addConditionalFormatting</anchor>
+            <arglist>(const ConditionalFormatting &amp;cf)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Cell *</type>
+            <name>cellAt</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>cellAt-2</anchor>
+            <arglist>(const CellReference &amp;pos) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Cell *</type>
+            <name>cellAt</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>cellAt</anchor>
+            <arglist>(int row, int col) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>defineName</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>defineName</anchor>
+            <arglist>(const QString &amp;name, const QString &amp;formula, const QString &amp;comment, const QString &amp;scope)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellRange</type>
+            <name>dimension</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>dimension</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>documentProperty</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>documentProperty</anchor>
+            <arglist>(const QString &amp;key) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setDocumentProperty</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>setDocumentProperty</anchor>
+            <arglist>(const QString &amp;key, const QString &amp;property)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>documentPropertyNames</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>documentPropertyNames</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QStringList</type>
+            <name>sheetNames</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>sheetNames</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>addSheet</anchor>
+            <arglist>(const QString &amp;name, AbstractSheet::SheetType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>insertSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>insertSheet</anchor>
+            <arglist>(int index, const QString &amp;name, AbstractSheet::SheetType type)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>selectSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>selectSheet</anchor>
+            <arglist>(const QString &amp;name)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>renameSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>renameSheet</anchor>
+            <arglist>(const QString &amp;oldName, const QString &amp;newName)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>copySheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>copySheet</anchor>
+            <arglist>(const QString &amp;srcName, const QString &amp;distName)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>moveSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>moveSheet</anchor>
+            <arglist>(const QString &amp;srcName, int distIndex)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>deleteSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>deleteSheet</anchor>
+            <arglist>(const QString &amp;name)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Workbook *</type>
+            <name>workbook</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>workbook</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>AbstractSheet *</type>
+            <name>sheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>sheet</anchor>
+            <arglist>(const QString &amp;sheetName) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>AbstractSheet *</type>
+            <name>currentSheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>currentSheet</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Worksheet *</type>
+            <name>currentWorksheet</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>currentWorksheet</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>save</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>save</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>saveAs</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>saveAs</anchor>
+            <arglist>(const QString &amp;name) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>saveAs</name>
+            <anchorfile>document.html</anchorfile>
+            <anchor>saveAs-2</anchor>
+            <arglist>(QIODevice *device) const</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Format</name>
+        <filename>format.html</filename>
+        <member kind="enum">
+            <name>FontScript</name>
+            <anchor>FontScript-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontScriptNormal">
+            <anchor>FontScript-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontScriptSuper">
+            <anchor>FontScript-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontScriptSub">
+            <anchor>FontScript-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>FontUnderline</name>
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontUnderlineNone">
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontUnderlineSingle">
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontUnderlineDouble">
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontUnderlineSingleAccounting">
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="FontUnderlineDoubleAccounting">
+            <anchor>FontUnderline-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>HorizontalAlignment</name>
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHGeneral">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignLeft">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHCenter">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignRight">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHFill">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHJustify">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHMerge">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignHDistributed">
+            <anchor>HorizontalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>VerticalAlignment</name>
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignTop">
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignVCenter">
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignBottom">
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignVJustify">
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="AlignVDistributed">
+            <anchor>VerticalAlignment-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>BorderStyle</name>
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderNone">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderThin">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderMedium">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderDashed">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderDotted">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderThick">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderDouble">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderHair">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderMediumDashed">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderDashDot">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderMediumDashDot">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderDashDotDot">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderMediumDashDotDot">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="BorderSlantDashDot">
+            <anchor>BorderStyle-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>DiagonalBorderType</name>
+            <anchor>DiagonalBorderType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="DiagonalBorderNone">
+            <anchor>DiagonalBorderType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="DiagonalBorderDown">
+            <anchor>DiagonalBorderType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="DiagonalBorderUp">
+            <anchor>DiagonalBorderType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="DiagnoalBorderBoth">
+            <anchor>DiagonalBorderType-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="enum">
+            <name>FillPattern</name>
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternNone">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternSolid">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternMediumGray">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkGray">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightGray">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkHorizontal">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkVertical">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkDown">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkUp">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkGrid">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternDarkTrellis">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightHorizontal">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightVertical">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightDown">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightUp">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightTrellis">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternGray125">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternGray0625">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member name="PatternLightGrid">
+            <anchor>FillPattern-enum</anchor>
+            <arglist></arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>Format</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>Format</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>Format</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>Format-2</anchor>
+            <arglist>(const Format &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format &amp;</type>
+            <name>operator=</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>operator-eq</anchor>
+            <arglist>(const Format &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Format</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>dtor.Format</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>numberFormatIndex</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>numberFormatIndex</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setNumberFormatIndex</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setNumberFormatIndex</anchor>
+            <arglist>(int format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>numberFormat</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>numberFormat</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setNumberFormat</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setNumberFormat</anchor>
+            <arglist>(const QString &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isDateTimeFormat</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>isDateTimeFormat</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>fontSize</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontSize</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontSize</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontSize</anchor>
+            <arglist>(int size)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>fontItalic</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontItalic</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontItalic</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontItalic</anchor>
+            <arglist>(bool italic)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>fontStrikeOut</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontStrikeOut</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontStrikeOut</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontStrikeOut</anchor>
+            <arglist>(bool strikeOut)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>fontColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>fontBold</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontBold</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontBold</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontBold</anchor>
+            <arglist>(bool bold)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>FontScript</type>
+            <name>fontScript</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontScript</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontScript</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontScript</anchor>
+            <arglist>(FontScript script)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>FontUnderline</type>
+            <name>fontUnderline</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontUnderline</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontUnderline</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontUnderline</anchor>
+            <arglist>(FontUnderline underline)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>fontOutline</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontOutline</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontOutline</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontOutline</anchor>
+            <arglist>(bool outline)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>fontName</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fontName</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFontName</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFontName</anchor>
+            <arglist>(const QString &amp;name)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QFont</type>
+            <name>font</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>font</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFont</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFont</anchor>
+            <arglist>(const QFont &amp;font)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>HorizontalAlignment</type>
+            <name>horizontalAlignment</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>horizontalAlignment</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setHorizontalAlignment</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setHorizontalAlignment</anchor>
+            <arglist>(HorizontalAlignment align)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>VerticalAlignment</type>
+            <name>verticalAlignment</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>verticalAlignment</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setVerticalAlignment</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setVerticalAlignment</anchor>
+            <arglist>(VerticalAlignment align)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>textWrap</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>textWrap</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setTextWarp</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setTextWarp</anchor>
+            <arglist>(bool wrap)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>rotation</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>rotation</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRotation</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setRotation</anchor>
+            <arglist>(int rotation)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>indent</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>indent</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setIndent</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setIndent</anchor>
+            <arglist>(int indent)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>shrinkToFit</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>shrinkToFit</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setShrinkToFit</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setShrinkToFit</anchor>
+            <arglist>(bool shink)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>BorderStyle</type>
+            <name>leftBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>leftBorderStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLeftBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setLeftBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>leftBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>leftBorderColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLeftBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setLeftBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>BorderStyle</type>
+            <name>rightBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>rightBorderStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRightBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setRightBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>rightBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>rightBorderColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRightBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setRightBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>BorderStyle</type>
+            <name>topBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>topBorderStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setTopBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setTopBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>topBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>topBorderColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setTopBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setTopBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>BorderStyle</type>
+            <name>bottomBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>bottomBorderStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setBottomBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setBottomBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>bottomBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>bottomBorderColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setBottomBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setBottomBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>BorderStyle</type>
+            <name>diagonalBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>diagonalBorderStyle</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setDiagonalBorderStyle</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setDiagonalBorderStyle</anchor>
+            <arglist>(BorderStyle style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>DiagonalBorderType</type>
+            <name>diagonalBorderType</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>diagonalBorderType</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setDiagonalBorderType</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setDiagonalBorderType</anchor>
+            <arglist>(DiagonalBorderType style)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>diagonalBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>diagonalBorderColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setDiagonalBorderColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setDiagonalBorderColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>FillPattern</type>
+            <name>fillPattern</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>fillPattern</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFillPattern</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setFillPattern</anchor>
+            <arglist>(FillPattern pattern)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>patternForegroundColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>patternForegroundColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setPatternForegroundColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setPatternForegroundColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QColor</type>
+            <name>patternBackgroundColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>patternBackgroundColor</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setPatternBackgroundColor</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setPatternBackgroundColor</anchor>
+            <arglist>(const QColor &amp;color)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>locked</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>locked</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setLocked</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setLocked</anchor>
+            <arglist>(bool locked)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>hidden</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>hidden</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setHidden</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>setHidden</anchor>
+            <arglist>(bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>mergeFormat</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>mergeFormat</anchor>
+            <arglist>(const Format &amp;modifier)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isValid</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>isValid</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isEmpty</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>isEmpty</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>operator==</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>operator-eq-eq</anchor>
+            <arglist>(const Format &amp;format) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>operator!=</name>
+            <anchorfile>format.html</anchorfile>
+            <anchor>operator-not-eq</anchor>
+            <arglist>(const Format &amp;format) const</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>RichString</name>
+        <filename>richstring.html</filename>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>RichString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>RichString</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>RichString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>RichString-2</anchor>
+            <arglist>(const QString text)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>RichString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>RichString-3</anchor>
+            <arglist>(const RichString &amp;other)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~RichString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>dtor.RichString</anchor>
+            <arglist>()</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRichString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>isRichString</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isNull</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>isNull</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isEmtpy</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>isEmtpy</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>toPlainString</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>toPlainString</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>toHtml</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>toHtml</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setHtml</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>setHtml</anchor>
+            <arglist>(const QString &amp;text)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>int</type>
+            <name>fragmentCount</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>fragmentCount</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>addFragment</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>addFragment</anchor>
+            <arglist>(const QString &amp;text, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QString</type>
+            <name>fragmentText</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>fragmentText</anchor>
+            <arglist>(int index) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>fragmentFormat</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>fragmentFormat</anchor>
+            <arglist>(int index) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>operator QVariant</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>operator-QVariant</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>RichString &amp;</type>
+            <name>operator=</name>
+            <anchorfile>richstring.html</anchorfile>
+            <anchor>operator-eq</anchor>
+            <arglist>(const RichString &amp;other)</arglist>
+        </member>
+    </compound>
+    <compound kind="class">
+        <name>Worksheet</name>
+        <filename>worksheet.html</filename>
+        <base>AbstractSheet</base>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>write</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>write-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QVariant &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>write</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>write</anchor>
+            <arglist>(int row, int column, const QVariant &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>read</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>read-2</anchor>
+            <arglist>(const CellReference &amp;row_column) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QVariant</type>
+            <name>read</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>read</anchor>
+            <arglist>(int row, int column) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeString-3</anchor>
+            <arglist>(const CellReference &amp;row_column, const QString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeString-4</anchor>
+            <arglist>(int row, int column, const QString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeString-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const RichString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeString</anchor>
+            <arglist>(int row, int column, const RichString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeInlineString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeInlineString-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeInlineString</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeInlineString</anchor>
+            <arglist>(int row, int column, const QString &amp;value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeNumeric</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeNumeric-2</anchor>
+            <arglist>(const CellReference &amp;row_column, double value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeNumeric</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeNumeric</anchor>
+            <arglist>(int row, int column, double value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeFormula</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeFormula-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const CellFormula &amp;formula, const Format &amp;format, double result)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeFormula</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeFormula</anchor>
+            <arglist>(int row, int column, const CellFormula &amp;formula_, const Format &amp;format, double result)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeBlank</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeBlank-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeBlank</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeBlank</anchor>
+            <arglist>(int row, int column, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeBool</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeBool-2</anchor>
+            <arglist>(const CellReference &amp;row_column, bool value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeBool</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeBool</anchor>
+            <arglist>(int row, int column, bool value, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeDateTime</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeDateTime-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QDateTime &amp;dt, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeDateTime</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeDateTime</anchor>
+            <arglist>(int row, int column, const QDateTime &amp;dt, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeTime</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeTime-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QTime &amp;t, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeTime</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeTime</anchor>
+            <arglist>(int row, int column, const QTime &amp;t, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeHyperlink</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeHyperlink-2</anchor>
+            <arglist>(const CellReference &amp;row_column, const QUrl &amp;url, const Format &amp;format, const QString &amp;display, const QString &amp;tip)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>writeHyperlink</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>writeHyperlink</anchor>
+            <arglist>(int row, int column, const QUrl &amp;url, const Format &amp;format, const QString &amp;display, const QString &amp;tip)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addDataValidation</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>addDataValidation</anchor>
+            <arglist>(const DataValidation &amp;validation)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>addConditionalFormatting</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>addConditionalFormatting</anchor>
+            <arglist>(const ConditionalFormatting &amp;cf)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Cell *</type>
+            <name>cellAt</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>cellAt</anchor>
+            <arglist>(const CellReference &amp;row_column) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Cell *</type>
+            <name>cellAt</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>cellAt-2</anchor>
+            <arglist>(int row, int column) const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>insertImage</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>insertImage</anchor>
+            <arglist>(int row, int column, const QImage &amp;image)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Chart *</type>
+            <name>insertChart</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>insertChart</anchor>
+            <arglist>(int row, int column, const QSize &amp;size)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>mergeCells</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>mergeCells</anchor>
+            <arglist>(const CellRange &amp;range, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>unmergeCells</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>unmergeCells</anchor>
+            <arglist>(const CellRange &amp;range)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>QList&lt;CellRange&gt;</type>
+            <name>mergedCells</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>mergedCells</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnWidth</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnWidth</anchor>
+            <arglist>(const CellRange &amp;range, double width)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnFormat</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnFormat</anchor>
+            <arglist>(const CellRange &amp;range, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnHidden</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnHidden</anchor>
+            <arglist>(const CellRange &amp;range, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnWidth</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnWidth-2</anchor>
+            <arglist>(int colFirst, int colLast, double width)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnFormat</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnFormat-2</anchor>
+            <arglist>(int colFirst, int colLast, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setColumnHidden</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setColumnHidden-2</anchor>
+            <arglist>(int colFirst, int colLast, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>double</type>
+            <name>columnWidth</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>columnWidth</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>columnFormat</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>columnFormat</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isColumnHidden</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isColumnHidden</anchor>
+            <arglist>(int column)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHeight</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRowHeight</anchor>
+            <arglist>(int rowFirst, int rowLast, double height)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowFormat</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRowFormat</anchor>
+            <arglist>(int rowFirst, int rowLast, const Format &amp;format)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>setRowHidden</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRowHidden</anchor>
+            <arglist>(int rowFirst, int rowLast, bool hidden)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>double</type>
+            <name>rowHeight</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>rowHeight</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>Format</type>
+            <name>rowFormat</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>rowFormat</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRowHidden</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isRowHidden</anchor>
+            <arglist>(int row)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>groupRows</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>groupRows</anchor>
+            <arglist>(int rowFirst, int rowLast, bool collapsed)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>groupColumns</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>groupColumns</anchor>
+            <arglist>(int colFirst, int colLast, bool collapsed)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>groupColumns</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>groupColumns-2</anchor>
+            <arglist>(const CellRange &amp;range, bool collapsed)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>CellRange</type>
+            <name>dimension</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>dimension</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isWindowProtected</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isWindowProtected</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setWindowProtected</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setWindowProtected</anchor>
+            <arglist>(bool protect)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isFormulasVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isFormulasVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setFormulasVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setFormulasVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isGridLinesVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isGridLinesVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setGridLinesVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setGridLinesVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRowColumnHeadersVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isRowColumnHeadersVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRowColumnHeadersVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRowColumnHeadersVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isZerosVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isZerosVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setZerosVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setZerosVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRightToLeft</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isRightToLeft</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRightToLeft</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRightToLeft</anchor>
+            <arglist>(bool enable)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isSelected</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isSelected</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setSelected</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setSelected</anchor>
+            <arglist>(bool select)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isRulerVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isRulerVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setRulerVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setRulerVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isOutlineSymbolsVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isOutlineSymbolsVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setOutlineSymbolsVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setOutlineSymbolsVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>bool</type>
+            <name>isWhiteSpaceVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>isWhiteSpaceVisible</anchor>
+            <arglist>() const</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type>void</type>
+            <name>setWhiteSpaceVisible</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>setWhiteSpaceVisible</anchor>
+            <arglist>(bool visible)</arglist>
+        </member>
+        <member kind="function" protection="public" virtualness="non" static="no">
+            <type></type>
+            <name>~Worksheet</name>
+            <anchorfile>worksheet.html</anchorfile>
+            <anchor>dtor.Worksheet</anchor>
+            <arglist>()</arglist>
+        </member>
+    </compound>
+</tagfile>

@@ -1,0 +1,23 @@
+#ifndef SPECIL_HYSPEX_H
+#define SPECIL_HYSPEX_H
+
+#include "SpecIL_Base.h"
+
+class SpecIL_HySpex : public SpecIL_Base
+{
+public:
+	// Destruktor
+	~SpecIL_HySpex();
+	// Konstruktor
+	SpecIL_HySpex();
+	// Einlesen der Headerdaten und ggf. Bilddaten, wenn sie nicht zu groﬂ sind
+	int read();
+	// Headerdaten aus der Cubedatei lesen
+	int readFileHeader();
+	// Bild speichern
+	int write(std::string outfile);
+protected:
+	// Datei oeffnen und Daten laden
+	int readImageData();
+};
+#endif // SPECIL_HYSPEX_H

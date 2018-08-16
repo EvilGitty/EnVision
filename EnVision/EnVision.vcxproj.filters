@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Dateien">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generierte Dateien">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generierte Dateien\Release">
+      <UniqueIdentifier>{492bd0aa-1a9f-457d-b784-bf6ba28f1b0d}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Filemanager">
+      <UniqueIdentifier>{a27f83ae-5b67-4ab4-9f55-afab69b8a4ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base">
+      <UniqueIdentifier>{b041a1dc-1c49-4e75-8d4d-bc9f0513ae02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gui">
+      <UniqueIdentifier>{fc8e36ab-dfb8-47bd-8dd4-5ac8c6a77faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Helper">
+      <UniqueIdentifier>{743889c3-53b1-4cd3-b9ad-9f1b4f1f1253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Widgets">
+      <UniqueIdentifier>{0fca6bf2-8493-4626-97fe-7cc543123889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Events">
+      <UniqueIdentifier>{f2a42c09-91e6-4958-a288-c4895daa8fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GPS">
+      <UniqueIdentifier>{1b68d3db-5b7b-45d7-8653-40fe1e75b2db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image">
+      <UniqueIdentifier>{6d1c4111-c0f7-4506-b433-a5785406de31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image\Events">
+      <UniqueIdentifier>{74f9824b-2083-44a7-b789-8dcad5cd0eb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image\Thread">
+      <UniqueIdentifier>{c1310dd9-27af-4c16-b52c-9034a5a89553}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cube">
+      <UniqueIdentifier>{776f27ee-4c28-4247-8078-da5a46cdaeb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cube\Events">
+      <UniqueIdentifier>{e7cc2ef0-5b72-45b6-8f46-ca87fcee420f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plotter">
+      <UniqueIdentifier>{bf4729db-aa0d-43b2-a2b7-7f6be4cc2653}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plotter\Events">
+      <UniqueIdentifier>{ef8da0aa-acb0-4ab7-b56b-9389f185b702}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Table">
+      <UniqueIdentifier>{9309f2f3-836d-460e-a7b7-8d41d92953f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Table\Events">
+      <UniqueIdentifier>{2745b0d3-8885-49d8-b4f2-82686786910a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Image\Mask">
+      <UniqueIdentifier>{9b10ef27-6351-464d-bf42-9d12e4e1d4db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Plotter\Thread">
+      <UniqueIdentifier>{e670a612-3772-4169-b63f-e0464eaae87b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generierte Dateien\Debug">
+      <UniqueIdentifier>{5008160c-c846-4308-95d9-a27a7c5d2e50}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{1ba0e7f9-a49e-40a9-99ee-61759900cbbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\QCustomPlot">
+      <UniqueIdentifier>{5e5bb180-280c-4fa8-910c-bef172541af6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\SpecIL">
+      <UniqueIdentifier>{02a44900-802e-4c1e-9a8e-61aec01d9d25}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_envision.cpp">
+      <Filter>Generierte Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\filemanager.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_filemanager.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\load_hyspex_img.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\load_im3.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\load_mat.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\load_tgd.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="Filemanager\xmlinit.cpp">
+      <Filter>Filemanager</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_xmlinit.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Events\base_events.cpp">
+      <Filter>Base\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Thread\image_thread.cpp">
+      <Filter>Image\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_image_thread.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_textures.cpp">
+      <Filter>Generierte Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_shaders.cpp">
+      <Filter>Generierte Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube\initCube.cpp">
+      <Filter>Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_initCube.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube\Events\cube_events.cpp">
+      <Filter>Cube\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\image_thumbnail.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\initImage.cpp">
+      <Filter>Image</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_initImage.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Events\image_events.cpp">
+      <Filter>Image\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Plotter\initPlot.cpp">
+      <Filter>Plotter</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_initPlot.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Plotter\setAxes.cpp">
+      <Filter>Plotter</Filter>
+    </ClCompile>
+    <ClCompile Include="Plotter\Events\plot_events.cpp">
+      <Filter>Plotter\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Widgets\cubeWidget.cpp">
+      <Filter>Base\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cubeWidget.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Widgets\imageWidget.cpp">
+      <Filter>Base\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_imageWidget.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Widgets\plotterWidget.cpp">
+      <Filter>Base\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_plotterWidget.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\Widgets\tableWidget.cpp">
+      <Filter>Base\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_tableWidget.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\envision.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_envision.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\tabhandling.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_tabhandling.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\terminal.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\customEllipse.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\customLine.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\customPolygon.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\customRect.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\customText.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\image_mask.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Mask\image_colormap.cpp">
+      <Filter>Image\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="Plotter\Thread\pixel_thread.cpp">
+      <Filter>Plotter\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_pixel_thread.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_image_mask.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="Image\Events\image_zoom.cpp">
+      <Filter>Image\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_image_zoom.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_image_zoom.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\QCustomPlot\qcustomplot.cpp">
+      <Filter>3rdparty\QCustomPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qcustomplot.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qcustomplot.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="UI\table_widget.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\envision.qrc">
+      <Filter>Resource Dateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\envision.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\image_widget.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Filemanager\filemanager.h">
+      <Filter>Filemanager</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Filemanager\xmlinit.h">
+      <Filter>Filemanager</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Image\Thread\image_thread.h">
+      <Filter>Image\Thread</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\cube_widget.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\textures.qrc">
+      <Filter>Resource Dateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Resources\shaders.qrc">
+      <Filter>Resource Dateien</Filter>
+    </CustomBuild>
+    <CustomBuild Include="UI\plot_widget.ui">
+      <Filter>UI</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Cube\initCube.h">
+      <Filter>Cube</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Image\initImage.h">
+      <Filter>Image</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Plotter\initPlot.h">
+      <Filter>Plotter</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\Widgets\cubeWidget.h">
+      <Filter>Base\Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\Widgets\imageWidget.h">
+      <Filter>Base\Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\Widgets\plotterWidget.h">
+      <Filter>Base\Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\Widgets\tableWidget.h">
+      <Filter>Base\Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\envision.h">
+      <Filter>Base</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Base\tabhandling.h">
+      <Filter>Base</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Plotter\Thread\pixel_thread.h">
+      <Filter>Plotter\Thread</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Image\Mask\image_mask.h">
+      <Filter>Image\Mask</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Image\Events\image_zoom.h">
+      <Filter>Image\Events</Filter>
+    </CustomBuild>
+    <CustomBuild Include="3rdparty\QCustomPlot\qcustomplot.h">
+      <Filter>3rdparty\QCustomPlot</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_table_widget.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_envision.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_image_widget.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Gui\gui_master.h">
+      <Filter>Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_cube_widget.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_plot_widget.h">
+      <Filter>Generierte Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\image_master.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\image_thumbnail.h">
+      <Filter>Image</Filter>
+    </ClInclude>
+    <ClInclude Include="Table\table_master.h">
+      <Filter>Table</Filter>
+    </ClInclude>
+    <ClInclude Include="Plotter\plot_master.h">
+      <Filter>Plotter</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\terminal.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Image\Mask\image_colormap.h">
+      <Filter>Image\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="makros.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,2512 @@
+#include "SpecIL_Base.h"
+#include <fstream>
+#include <stdio.h>
+
+// OpenCV
+//#include <opencv2/core/core.hpp>
+//#include <opencv2/imgcodecs.hpp>
+//#include <opencv2/highgui/highgui.hpp>
+
+SpecIL_Base::~SpecIL_Base()
+{
+	this->CleanMemory();
+};
+//
+SpecIL_Base::SpecIL_Base()
+{
+	this->init();
+};
+//
+t_SpecHead* SpecIL_Base::getHeaderPointer()
+{
+	return &SpecHeader;
+};
+//
+int SpecIL_Base::init()
+{
+	this->cubemaxsize = 1000000000; // ~1GB
+	// ------------------------------------------------------------------------
+	// FLAGs
+	this->FileMode = 0;
+	this->FileDataLoaded = 0;
+	this->FileHeaderLoaded = 0;
+	this->ProfileLoaded = 0;
+	this->NewFileData = 0;
+	this->ReadOnlyFromHDD = 0;
+	this->UsingErrorLog = false;
+	this->ENVIhdrLoaded = false;
+	// ------------------------------------------------------------------------
+
+
+	this->OutputProfile = 0;
+	this->SelectedImgProperties = 0;
+
+	// SpecHeader
+	this->SpecHeader.filename = "";
+	this->SpecHeader.type = 0;
+	this->SpecHeader.imgcube = NULL;
+	this->SpecHeader.headsize = 0;
+	this->SpecHeader.numdim = 3;
+	this->SpecHeader.imgsize[0] = 0;
+	this->SpecHeader.imgsize[1] = 0;
+	this->SpecHeader.imgsize[2] = 0;
+	this->SpecHeader.interleave = t_SpecHead::IL_UNKNOWN;
+	this->SpecHeader.data_type = t_SpecHead::DT_UNKNOWN;
+	this->SpecHeader.data_type_str = "DT_UNKNOWN";
+	this->SpecHeader.byte_order = t_SpecHead::BO_UNKNOWN;
+	this->SpecHeader.bitdepth = 0;
+	this->SpecHeader.pixelsize = 0;
+	this->SpecHeader.maxval = 0;
+	this->SpecHeader.ID = "SpecIL_Object";
+	this->SpecHeader.wavelen.clear();
+	this->SpecHeader.wavelenunit = "";
+	this->SpecHeader.exposureTimeUS.clear();
+	this->SpecHeader.data_type_maxval = 0.0;
+	this->SpecHeader.data_type_minval = 0.0;
+
+	return 0;
+};
+//
+int SpecIL_Base::CleanMemory()
+{
+	if (this->SpecHeader.imgcube != NULL)
+	{
+		delete[] this->SpecHeader.imgcube;
+	};
+	this->SpecHeader.imgcube = NULL;
+
+	this->SpecHeader.wavelen.clear();
+	this->SpecHeader.exposureTimeUS.clear();
+
+	return 0;
+};
+//
+void SpecIL_Base::ErrorMsgLog(std::string errmsg)
+{
+	if (this->UsingErrorLog == true)
+	{
+		//Logdatei
+		std::string file = this->SpecHeader.filename;
+
+		size_t len = file.find_last_of(".");
+
+		std::string logfile = file.substr(0, len);
+
+		logfile = logfile + "_SpecIL_ERROR_LOG" + ".txt";
+
+		std::fstream fsError(logfile, std::fstream::out | std::fstream::app);
+
+		fsError << errmsg << std::endl;
+
+		fsError.close();
+	};
+	// Anwendungsbsp:
+	// this->ErrorMsgLog(std::string("HALLOLOOL"));
+};
+//
+void SpecIL_Base::setReadOnlyFromHDD()
+{
+	this->ReadOnlyFromHDD = 1;
+};
+//
+int SpecIL_Base::setProfile(std::string profile)
+{
+	// Startzustand: RAW Profil
+	if (profile.compare("Standard") == 0)
+	{
+		this->OutputProfile = 0;
+		return 0;
+	};
+	if (profile.compare("CWorkflow") == 0)
+	{
+		this->OutputProfile = 1;
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::setProfile(): Invalid string parameter.");
+	return -1;
+};
+//
+void SpecIL_Base::setImageProperties(const char* id, int width, int height, int planes, t_SpecHead::t_interleave il, t_SpecHead::t_data_type dt)
+{
+	this->SpecHeader.ID = std::string(id);
+	this->SpecHeader.interleave = il;
+	this->SpecHeader.data_type = dt;
+	this->SpecHeader.imgsize[0] = width;
+	this->SpecHeader.imgsize[1] = planes;
+	this->SpecHeader.imgsize[2] = height;
+
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE)
+	{
+		this->SpecHeader.pixelsize = 1;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_SINT || this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+	{
+		this->SpecHeader.pixelsize = 2;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG || this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT || this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+	{
+		this->SpecHeader.pixelsize = 4;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_DOUBLE || this->SpecHeader.data_type == t_SpecHead::DT_2x32_COMPLEX || this->SpecHeader.data_type == t_SpecHead::DT_64_SLONG || this->SpecHeader.data_type == t_SpecHead::DT_64_ULONG)
+	{
+		this->SpecHeader.pixelsize = 8;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_2x64_COMPLEX)
+	{
+		this->SpecHeader.pixelsize = 16;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_UNKNOWN)
+	{
+		this->SpecHeader.pixelsize = 0;
+	};
+
+	this->setDataTypeMaxMin();
+
+	this->SelectedImgProperties = 2;
+};
+//
+void SpecIL_Base::setID(const char* id)
+{
+	this->SpecHeader.ID = std::string(id);
+};
+//
+void SpecIL_Base::setWavelen(std::vector <float> wavelen)
+{
+	this->SpecHeader.wavelen = wavelen;
+};
+//
+void SpecIL_Base::setExposureTimeUS(std::vector <float> exposureTimeUS)
+{
+	this->SpecHeader.exposureTimeUS = exposureTimeUS;
+};
+//
+int SpecIL_Base::loadProfile()
+{
+	// RAW
+	if (this->OutputProfile == 0)
+	{
+		this->ProfileLoaded = 0;	// oder doch 0 ? Weil ja eigentlich das RAW Profil kein richtiges Profil ist...
+		return 0;
+	};
+
+	// CWorkflow
+	if (this->OutputProfile == 1)
+	{
+		this->ProfileLoaded = 1;
+		return 0;
+	};
+
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::loadProfile()");
+	return -1;
+};
+//
+int SpecIL_Base::readENVIhdr()
+{
+	int posFileExt = this->SpecHeader.filename.find_last_of(".") + 1;
+	if(posFileExt != this->SpecHeader.filename.npos)
+	{
+		std::string fileExt = this->SpecHeader.filename.substr(posFileExt);
+
+		// Ueberpruefen ob gueltige Endung
+		if (fileExt == "img" || fileExt == "bin" || fileExt == "cue")
+		{
+			std::string hdrstring = this->SpecHeader.filename;
+			hdrstring.replace(posFileExt, 3, "hdr");
+
+			// ENVI Header oeffnen
+			std::ifstream ifs(hdrstring);
+			if(ifs.fail() == 0)
+			{
+				std::string a, b, c;
+				char eq = NULL;
+				int inum;
+
+				std::string line;
+				while(std::getline(ifs, line))
+				{
+					if (line.find(" ID") == 0)
+					{
+						unsigned int pos_eq = line.find_first_of("=");
+						std::string stID = line.substr(pos_eq+2);
+						this->SpecHeader.ID = stID;
+					};
+
+					if (line.find("interleave") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> eq >> b;
+
+							if(b.compare(std::string("bil")) == 0 ){
+								this->SpecHeader.interleave = t_SpecHead::IL_BIL;
+							};
+							if(b.compare(std::string("bsq")) == 0 ){
+								this->SpecHeader.interleave = t_SpecHead::IL_BSQ;
+							};
+							if(b.compare(std::string("bip")) == 0 ){
+								this->SpecHeader.interleave = t_SpecHead::IL_BIP;
+							};
+							if(b.size() == 0){
+								this->SpecHeader.interleave = t_SpecHead::IL_UNKNOWN;
+							};
+
+						eq = NULL;
+						a.clear();
+						b.clear();
+					};
+
+					if (line.find("data type") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> b >> eq >> inum;
+
+							switch (inum)
+							{
+							case 1:
+								this->SpecHeader.data_type = t_SpecHead::DT_8_BYTE;
+								this->SpecHeader.pixelsize = 1;
+								break;
+							case 2:
+								this->SpecHeader.data_type = t_SpecHead::DT_16_SINT;
+								this->SpecHeader.pixelsize = 2;
+								break;
+							case 3:
+								this->SpecHeader.data_type = t_SpecHead::DT_32_SLONG;
+								this->SpecHeader.pixelsize = 4;
+								break;
+							case 4:
+								this->SpecHeader.data_type = t_SpecHead::DT_32_FLOAT;
+								this->SpecHeader.pixelsize = 4;
+								break;
+							case 5:
+								this->SpecHeader.data_type = t_SpecHead::DT_64_DOUBLE;
+								this->SpecHeader.pixelsize = 8;
+								break;
+							case 6:
+								this->SpecHeader.data_type = t_SpecHead::DT_2x32_COMPLEX;
+								this->SpecHeader.pixelsize = 8;
+								break;
+							case 9:
+								this->SpecHeader.data_type = t_SpecHead::DT_2x64_COMPLEX;
+								this->SpecHeader.pixelsize = 16;
+								break;
+							case 12:
+								this->SpecHeader.data_type = t_SpecHead::DT_16_UINT;
+								this->SpecHeader.pixelsize = 2;
+								break;
+							case 13:
+								this->SpecHeader.data_type = t_SpecHead::DT_32_ULONG;
+								this->SpecHeader.pixelsize = 4;
+								break;
+							case 14:
+								this->SpecHeader.data_type = t_SpecHead::DT_64_SLONG;
+								this->SpecHeader.pixelsize = 8;
+								break;
+							case 15:
+								this->SpecHeader.data_type = t_SpecHead::DT_64_ULONG;
+								this->SpecHeader.pixelsize = 8;
+								break;
+							default:
+								this->SpecHeader.data_type = t_SpecHead::DT_UNKNOWN;
+								this->SpecHeader.pixelsize = 0;
+							};
+						inum = 0;
+						eq = NULL;
+						a.clear();
+						b.clear();
+					};
+
+					if (line.find("byte order") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> b >> eq >> inum;
+
+						switch (inum)
+						{
+						case 0:
+							this->SpecHeader.byte_order = t_SpecHead::BO_LSF;
+							break;
+						case 1:
+							this->SpecHeader.byte_order = t_SpecHead::BO_MSF;
+							break;
+						default:
+							this->SpecHeader.byte_order = t_SpecHead::BO_UNKNOWN;
+						};
+						inum = 0;
+						eq = NULL;
+						a.clear();
+						b.clear();
+					};
+
+					if (line.find("header offset") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> b >> eq >> inum;
+
+						this->SpecHeader.headsize = (unsigned int) inum;
+
+						inum = 0;
+						eq = NULL;
+						a.clear();
+						b.clear();
+					};
+
+					if (line.find("samples") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> eq >> inum;
+
+							this->SpecHeader.imgsize[0] = (unsigned long long) inum;
+
+
+						inum = 0;
+						eq = NULL;
+						a.clear();
+					};
+
+					if (line.find("lines") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> eq >> inum;
+
+							this->SpecHeader.imgsize[2] = (unsigned long long) inum;
+
+						inum = 0;
+						eq = NULL;
+						a.clear();
+					};
+
+					if (line.find("bands") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> eq >> inum;
+
+							this->SpecHeader.imgsize[1] = (unsigned long long) inum;
+
+
+						inum = 0;
+						eq = NULL;
+						a.clear();
+					};
+
+					if (line.find("wavelength units") == 0)
+					{
+						std::stringstream ss(line);
+						ss >> a >> b >> eq >> c;
+
+						this->SpecHeader.wavelenunit = c;
+
+						inum = 0;
+						eq = NULL;
+						a.clear();
+						b.clear();
+						c.clear();
+					};
+
+					if (line.find("wavelength") == 0)
+					{
+						std::string wavelengths = line.substr(line.find_last_of("=")+1);
+
+						std::string buf;
+						buf.clear();
+
+						// stehen schon Wellenlaengen in der Struktur??
+						if(this->SpecHeader.wavelen.size()==0)
+						{
+							for (size_t i=0; i<wavelengths.size(); ++i)
+							{
+								if (wavelengths[i]=='{' || wavelengths[i]==' ' || wavelengths[i]==',' || wavelengths[i]=='}' || i==wavelengths.size()-1)
+								{	
+									if (buf.size()>0)
+									{
+										this->SpecHeader.wavelen.push_back((float)atof(buf.c_str()));
+										buf.clear();
+									};
+								}
+								else
+								{
+									buf.push_back(wavelengths[i]);
+								};
+							};
+						};
+					};
+
+				};
+
+				this->ENVIhdrLoaded = true;
+
+				// Datei schliessen
+				ifs.close();
+				return 0;
+			};
+		};
+	};
+
+	// Err
+	this->ErrorMsgLog("Warning in SpecIL_Base::readENVIhdr(): Cant open .hdr");
+	return -1;
+};
+//
+int SpecIL_Base::writeENVIhdr(std::string outhdrfile)
+{
+	std::fstream fsENVIhdroutfile;
+	fsENVIhdroutfile.open(outhdrfile, std::fstream::out|std::fstream::binary);
+
+	if(fsENVIhdroutfile.fail() == false)
+	{
+		int hsize = (int)this->SpecHeader.headsize;
+		if (hsize > -1)
+		{
+			fsENVIhdroutfile << "ENVI" << std::endl;
+			fsENVIhdroutfile << "description = { " << std::endl;
+			if(this->SpecHeader.ID.size() > 0)
+			{
+				fsENVIhdroutfile << " ID = " << this->SpecHeader.ID;
+			};
+			fsENVIhdroutfile << " }" << std::endl;
+		
+			fsENVIhdroutfile << "samples = " << this->SpecHeader.imgsize[0] << std::endl;
+			fsENVIhdroutfile << "lines = " << this->SpecHeader.imgsize[2] << std::endl;
+			fsENVIhdroutfile << "bands = " << this->SpecHeader.imgsize[1] << std::endl;
+			fsENVIhdroutfile << "header offset = " << this->SpecHeader.headsize << std::endl;
+			fsENVIhdroutfile << "data type = " << (int)this->SpecHeader.data_type << std::endl;
+		
+			if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+			{
+				fsENVIhdroutfile << "interleave = bsq" << std::endl;
+			};
+			if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+			{
+				fsENVIhdroutfile << "interleave = bip" << std::endl;
+			};
+			if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+			{
+				fsENVIhdroutfile << "interleave = bil" << std::endl;
+			};
+			if(this->SpecHeader.interleave == t_SpecHead::IL_UNKNOWN)
+			{
+				fsENVIhdroutfile << "interleave = unknown" << std::endl;
+			};
+		
+			if(this->SpecHeader.byte_order != t_SpecHead::BO_UNKNOWN)
+			{
+				fsENVIhdroutfile << "byte order = " << (int)this->SpecHeader.byte_order << std::endl;
+			};
+		
+			if(this->SpecHeader.wavelen.size() > 0)
+			{
+				fsENVIhdroutfile << "wavelength units = nm" << std::endl;
+				fsENVIhdroutfile << "wavelength  = {";
+				for(unsigned int k=0; k<this->SpecHeader.wavelen.size(); k++)
+				{
+					fsENVIhdroutfile << this->SpecHeader.wavelen[k];
+					if (k<this->SpecHeader.wavelen.size()-1)
+					{
+						fsENVIhdroutfile << ", ";
+					};
+				};
+				fsENVIhdroutfile << "}" << std::endl;
+			};
+
+			fsENVIhdroutfile.close();
+			return 0;
+		}
+		else
+		{
+			//Err
+			this->ErrorMsgLog("In SpecIL_Base::writeENVIhdr(): No Headersize is given! First writing the datafile, then the .hdr!");
+			return -1;
+		};
+	};
+
+	this->ErrorMsgLog("In SpecIL_Base::writeENVIhdr(): Error write ENIV .hdr file!");
+	return -1;
+};
+//
+int SpecIL_Base::writeDataToHySpexFile(std::string outHySpexFile)
+{
+	std::string outfile = outHySpexFile;
+
+	std::fstream fsDataOutfile;
+	fsDataOutfile.open(outfile, std::fstream::in | std::fstream::out | std::fstream::trunc | std::fstream::binary);
+	unsigned int outheadsize = 0;
+
+	char buffer8[8] = {'H', 'Y', 'S', 'P', 'E', 'X', 0x00, 0x00};
+	fsDataOutfile.write(buffer8, 8);
+	outheadsize = outheadsize + 8;
+
+	// Headergroesse
+	char* outheadsizebuffer4 = reinterpret_cast<char*>(&outheadsize);
+	fsDataOutfile.write(outheadsizebuffer4, 4);
+	outheadsize = outheadsize + 4;
+
+	// Dummy
+	char dummybuffer[1949];
+	fsDataOutfile.write(dummybuffer, 1949);
+	outheadsize = outheadsize + 1949;
+
+	// Baender
+	unsigned int bands = (unsigned int) this->SpecHeader.imgsize[1];
+	char* bufferbands = reinterpret_cast<char*>(&bands);
+	fsDataOutfile.write(bufferbands,4);
+	outheadsize = outheadsize + 4;
+
+	// spatial
+	unsigned int spatial = (unsigned int) this->SpecHeader.imgsize[0];
+	char* bufferspatial = reinterpret_cast<char*>(&spatial);
+	fsDataOutfile.write(bufferspatial,4);
+	outheadsize = outheadsize + 4;
+
+	// Dummy
+	char dummy2buffer[4*26];
+	fsDataOutfile.write(dummy2buffer,4*26);
+	outheadsize = outheadsize + 4*26;
+
+	// Frames
+	unsigned int frames = (unsigned int) this->SpecHeader.imgsize[2];
+	char* bufferframes = reinterpret_cast<char*>(&frames);
+	fsDataOutfile.write(bufferframes,4);
+	outheadsize = outheadsize + 4;
+
+	if(this->SpecHeader.wavelen.size() > 0)
+	{
+		// Dummy
+		char dummy3buffer[104];
+		fsDataOutfile.write(dummy3buffer,104);
+		outheadsize = outheadsize + 104;
+	
+		// Wellenlaengen
+		for(int i = 0; i < this->SpecHeader.wavelen.size(); i++)
+		{
+			double value = (double) this->SpecHeader.wavelen.at(i);
+			char* valbuffer = reinterpret_cast<char*>(&value);
+			fsDataOutfile.write(valbuffer,8);
+			outheadsize = outheadsize + 8;
+		};
+	};
+
+	// Endgueltige Headergroesse schreiben
+	unsigned long outpos = fsDataOutfile.tellp();
+	fsDataOutfile.seekp(8);
+	fsDataOutfile.write(outheadsizebuffer4, 4);
+	fsDataOutfile.seekp(outpos);
+	this->SpecHeader.headsize = (int)outheadsize;	// Fuer die .hdr
+
+	// Bilddaten schreiben
+	unsigned long long imgsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+	unsigned long long bandsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+
+	std::ifstream ifs(this->tempOutFileName.c_str(), std::ifstream::in | std::ifstream::binary);
+	if (ifs.fail() == false)
+	{
+		char* buffer = new char[bandsize];
+		ifs.seekg(8, ifs.beg);// hat nur einen 8Byte Header
+
+		for (unsigned long long z = 0; z < this->SpecHeader.imgsize[1]; z++)
+		{
+			int lengthIn = ifs.tellg();
+			ifs.read(buffer, bandsize);
+
+			/*
+			cv::Mat Band(this->SpecHeader.imgsize[2], this->SpecHeader.imgsize[0], CV_16U, buffer);
+			double minVal, maxVal;
+			cv::minMaxLoc(Band, &minVal, &maxVal);
+			cv::Mat BandOutImage(this->SpecHeader.imgsize[2], this->SpecHeader.imgsize[0], CV_8U);
+			Band.convertTo(BandOutImage, CV_8U, 255.0 / (maxVal - minVal), -minVal * 255.0 / (maxVal - minVal));
+			std::string OutStr = "C:\\Testausgaben\\GaussCubeFilter\\BandOut-" + std::to_string(z) + ".png";
+			cv::imwrite(OutStr.c_str(), BandOutImage);
+			//*/
+
+			int lengthOut = fsDataOutfile.tellg();
+			fsDataOutfile.write(buffer, bandsize);
+
+		};
+		delete[] buffer;
+		ifs.close();
+	};
+	
+	
+	/*
+	if(SpecHeader.type == 1)
+	{
+		fsDataOutfile.write(static_cast<char*>(this->SpecHeader.imgcube), imgsize);
+	};
+	if(SpecHeader.type == 2)
+	{
+		// Das ist hier noch nicht schoen geloest....
+
+		std::ifstream ifs(this->SpecHeader.filename.c_str(), std::ifstream::in | std::ifstream::binary);
+		char* buffer = new char[1];
+		ifs.seekg(this->SpecHeader.headsize, ifs.beg);
+		for(long long i = 0; i < imgsize; i++)
+		{
+			ifs.read(buffer,1);
+			fsDataOutfile.write(buffer, 1);
+		};
+		delete[] buffer;
+		ifs.close();
+	};//*/
+	
+	fsDataOutfile.close();
+
+	return 0;
+};
+//
+int SpecIL_Base::writeDataToTGDfile(std::string outTGDfile)
+{
+	unsigned int dtype;
+	switch (this->SpecHeader.data_type)
+	{
+	case t_SpecHead::DT_8_BYTE:
+		dtype = 4;
+		break;
+	case t_SpecHead::DT_16_SINT:
+		dtype = 8;
+		break;
+	case t_SpecHead::DT_32_SLONG:
+		dtype = 32;
+		break;
+	case t_SpecHead::DT_32_FLOAT:
+		dtype = 512;
+		break;
+	case t_SpecHead::DT_64_DOUBLE:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	case t_SpecHead::DT_2x32_COMPLEX:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	case t_SpecHead::DT_2x64_COMPLEX:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	case t_SpecHead::DT_16_UINT:
+		dtype = 16;
+		break;
+	case t_SpecHead::DT_32_ULONG:
+		dtype = 256;
+		break;
+	case t_SpecHead::DT_64_SLONG:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	case t_SpecHead::DT_64_ULONG:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	default:
+		this->ErrorMsgLog("In SpecIL_Base::writeDataToTGDfile(): Datatype is not supported!");
+		return -1;
+	};
+
+	std::fstream fsDataOutfile;
+	fsDataOutfile.open(outTGDfile, std::fstream::in | std::fstream::out | std::fstream::trunc | std::fstream::binary);
+
+	char magic[4] = {'T', 'G', 'D', '!'};
+	fsDataOutfile.write(magic, 4);
+
+	unsigned int numdim = this->SpecHeader.numdim;
+	char* numdim4 = reinterpret_cast<char*>(&numdim);
+	fsDataOutfile.write(numdim4, 4);
+
+	unsigned int numspatial = this->SpecHeader.imgsize[0];
+	char* numspatial4 = reinterpret_cast<char*>(&numspatial);
+	fsDataOutfile.write(numspatial4, 4);
+
+	unsigned int numspectral = this->SpecHeader.imgsize[1];
+	char* numspectral4 = reinterpret_cast<char*>(&numspectral);
+	fsDataOutfile.write(numspectral4, 4);
+
+	unsigned int numframe = this->SpecHeader.imgsize[2];
+	char* numframe4 = reinterpret_cast<char*>(&numframe);
+	fsDataOutfile.write(numframe4, 4);
+
+	char* dtype4 = reinterpret_cast<char*>(&dtype);
+	fsDataOutfile.write(dtype4, 4);
+
+	this->SpecHeader.headsize = 4 + 4 + 4*numdim + 4;
+
+	// Bilddaten schreiben
+	size_t imgsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+	fsDataOutfile.write(static_cast<char*>(this->SpecHeader.imgcube), imgsize);
+	fsDataOutfile.close();
+
+	return 0;
+};
+//
+int SpecIL_Base::getPlane(void* plane, int x, int y, int z)
+{
+	// wurde read() ausgefuehrt ?
+	if(this->SpecHeader.type == 0)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Base::getPlane(): SpecHeader.type == 0, Data was not read! Run read()!");
+		return -1;
+	};
+	// Ein Band ausgeben
+	if(x < 0 && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		// RAW
+		if(this->OutputProfile == 0)
+		{
+			this->getPlane_Band(plane, x, y, z);
+			return 0;
+		};
+		// C-Workflow
+		if(this->OutputProfile == 1)
+		{
+			this->getPlane_Band_CWF(plane, x, y, z);
+			return 0;
+		};
+	};
+	// Einen Frame ausgeben
+	if (x < 0 && z < 0 && y < this->SpecHeader.imgsize[2])
+	{
+		this->getPlane_Frame(plane, x, y, z);
+		return 0;
+	};
+	// Ein Samplebild ausgeben
+	if (y < 0 && z < 0 && x < this->SpecHeader.imgsize[0])
+	{
+		this->getPlane_Sample(plane, x, y, z);
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Band(void* plane, int x, int y, int z)
+{
+	char* BandImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if(this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		// band interleaved by line
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			unsigned long long linesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+			// Bild zusammenbauen und umsortieren auf vereinbartes Standardformat
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				unsigned long long cubeoff = ( (this->SpecHeader.imgsize[1] * j + (unsigned long long)z) * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+				unsigned long long bandoff = linesize * j;
+				// Kopieren
+				std::memmove(&BandImgbuff[bandoff], &Cubebuff[cubeoff], linesize);
+			};
+			return 0;
+		};
+		// band sequential
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long bandsize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2];
+			unsigned long long cubeoff = (unsigned long long)z * bandsize;
+			std::memmove(BandImgbuff, &Cubebuff[cubeoff], bandsize);
+			return 0;
+		};
+		// band interleaved by pixel
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+				{
+					unsigned long long cubeoff = ((unsigned long long)z + (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1] )* this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (i + j * this->SpecHeader.imgsize[0]) *this->SpecHeader.pixelsize;
+					std::memmove(&BandImgbuff[bandoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				};
+			};
+			return 0;
+		};
+	};
+	// Daten auf HDD
+	// oder von/auf HDD arbeiten?
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		// band interleaved by line
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			// Startposition
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * (unsigned long long)z;
+			// Zeilegroessegroesse
+			unsigned long long linesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+			// Sprungweite zur naechsten Zeile
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * this->SpecHeader.imgsize[1];
+			// Bild zusammenbauen
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+			{
+				ifs.seekg(fileoff);
+				ifs.read(&BandImgbuff[i * linesize], linesize);
+				fileoff = fileoff + jump;
+			};
+			ifs.close();
+			return 0;
+		};
+		// band sequential
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long bandsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			unsigned long long startpos = (unsigned long long)this->SpecHeader.headsize + (unsigned long long)z * bandsize;
+			ifs.seekg(startpos);
+			ifs.read(BandImgbuff, bandsize);
+			ifs.close();
+			return 0;
+		};
+		// band interleaved by pixel
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++)
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)
+				{
+					unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + ((unsigned long long)z + (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1] )* this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+					ifs.seekg(fileoff);
+					ifs.read(&BandImgbuff[bandoff], this->SpecHeader.pixelsize);
+				};
+			};
+			ifs.close();
+			return 0;
+		};
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_Band(): Invalid Parameter(s) !");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Frame(void* plane, int x, int y, int z)
+{
+	char* FrameImgbuff = static_cast<char*>(plane);
+	if(this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			unsigned long long cubeoff = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * this->SpecHeader.imgsize[1] * (unsigned long long)y;
+			unsigned long long framesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1];
+			std::memmove(FrameImgbuff, &Cubebuff[cubeoff], framesize);
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long framesize = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long cubeoff = (unsigned long long)y * framesize;
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++) //z
+			{
+				std::memmove(&FrameImgbuff[framesize*i], &Cubebuff[cubeoff], framesize);
+				cubeoff = cubeoff + jump;
+			};
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)		// x
+			{
+				for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++)		// z
+				{
+					unsigned long long cubeoff = (k + (i + (unsigned long long)y * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+					unsigned long long frameoff = (i + k * this->SpecHeader.imgsize[0]) *this->SpecHeader.pixelsize;
+					std::memmove(&FrameImgbuff[frameoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				};
+			};
+			return 0;
+		};
+	};
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * this->SpecHeader.imgsize[1] * (unsigned long long)y;
+			unsigned long long framesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1];
+			ifs.seekg(fileoff);
+			ifs.read(FrameImgbuff, framesize);
+			ifs.close();
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long framesize = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + (unsigned long long)y * framesize;
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++) //z
+			{
+				ifs.seekg(fileoff);
+				ifs.read(&FrameImgbuff[framesize*i], framesize);
+				fileoff = fileoff + jump;
+			};
+			ifs.close();
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)		// x
+			{
+				for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++)		// z
+				{
+					unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + (k + (i + (unsigned long long)y * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+					unsigned long long frameoff = (i + k * this->SpecHeader.imgsize[0]) *this->SpecHeader.pixelsize;
+					ifs.seekg(fileoff);
+					ifs.read(&FrameImgbuff[frameoff], this->SpecHeader.pixelsize);
+				};
+			};
+			ifs.close();
+			return 0;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_RAW_Frame(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Sample(void* plane, int x, int y, int z)
+{
+	char* SampleImgbuff = static_cast<char*>(plane);
+	if(this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			unsigned long long cubeoff = (unsigned long long)x * this->SpecHeader.pixelsize;
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long maxlines = this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2];
+			for(unsigned long long i = 0; i < maxlines; i++)
+			{
+				std::memmove(&SampleImgbuff[i * this->SpecHeader.pixelsize], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				cubeoff = cubeoff + jump;
+			};
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long sampleoff = 0;
+			unsigned long long framejump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long bandjump = this->SpecHeader.imgsize[2] * framejump;
+			unsigned long long startrawoff = (unsigned long long)x * this->SpecHeader.pixelsize;
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++)
+			{
+				unsigned long long cubeoff = startrawoff + j * framejump;
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+				{
+					std::memmove(&SampleImgbuff[sampleoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+					sampleoff = sampleoff + this->SpecHeader.pixelsize;
+					cubeoff = cubeoff + bandjump;
+				};
+			};
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{		
+			for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++)		//z
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)	//y
+				{
+					unsigned long long cubeoff = (k + ((unsigned long long)x + i * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+					unsigned long long sampleoff = (k + i * this->SpecHeader.imgsize[1]) *this->SpecHeader.pixelsize;
+					std::memmove(&SampleImgbuff[sampleoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				};
+			};
+			return 0;
+		};
+	};
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + ((unsigned long long)x * this->SpecHeader.pixelsize);
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long maxlines = this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2];
+			for(unsigned long long i = 0; i < maxlines; i++)
+			{
+				ifs.seekg(fileoff);
+				ifs.read(&SampleImgbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+				fileoff = fileoff + jump;
+			};
+			ifs.close();
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long sampleoff = 0;
+			unsigned long long framejump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long bandjump = this->SpecHeader.imgsize[2] * framejump;
+			unsigned long long startfileoff = (unsigned long long)this->SpecHeader.headsize + (unsigned long long)x * this->SpecHeader.pixelsize;
+			for(unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++)
+			{
+				unsigned long long fileoff = startfileoff + j * framejump;
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+				{
+					ifs.seekg(fileoff);
+					ifs.read(&SampleImgbuff[sampleoff], this->SpecHeader.pixelsize);
+					sampleoff = sampleoff + this->SpecHeader.pixelsize;
+					fileoff = fileoff + bandjump;
+				};
+			};
+			ifs.close();
+			return 0;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for(unsigned long long k = 0; k < this->SpecHeader.imgsize[1]; k++)		//z
+			{
+				for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)	//y
+				{
+					unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + (k + ((unsigned long long)x + i * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+					unsigned long long sampleoff = (k + i * this->SpecHeader.imgsize[1]) *this->SpecHeader.pixelsize;
+					ifs.seekg(fileoff);
+					ifs.read(&SampleImgbuff[sampleoff], this->SpecHeader.pixelsize);
+				};
+			};
+			ifs.close();
+			return 0;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_RAW_Sample(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Band_CWF(void* plane, int x, int y, int z)
+{
+	char* BandImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			// Bild zusammenbauen und umsortieren auf vereinbartes Standardformat
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+				{
+					unsigned long long cubeoff = ((this->SpecHeader.imgsize[1] * j + (unsigned long long)z) * this->SpecHeader.imgsize[0] + i) * this->SpecHeader.pixelsize;
+					// x und y vertauschen...
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					// Kopieren
+					std::memmove(&BandImgbuff[bandoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				};
+			};
+			return 0;
+		};
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long Bandpos = (unsigned long long)z * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			// Bild zusammenbauen und umsortieren auf vereinbartes Standardformat
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+					{
+					unsigned long long cubeoff = (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize + Bandpos;
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&BandImgbuff[bandoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+					};
+				};
+				return 0;
+			};
+			// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+			{
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+				{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+					{
+					unsigned long long cubeoff = ((unsigned long long)z + (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1])* this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&BandImgbuff[bandoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+					};
+				};
+				return 0;
+			};
+		};
+		// Daten auf HDD
+		// oder von/auf HDD arbeiten?
+	if (this->SpecHeader.type == 2)
+		{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+			// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+			{
+				// Startposition
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * (unsigned long long)z;
+				// Zeilegroessegroesse
+			unsigned long long linesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+				// Sprungweite zur naechsten Zeile
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * this->SpecHeader.imgsize[1];
+				// Buffer
+			char* RAWBandImgbuff = new char[linesize * this->SpecHeader.imgsize[2]];
+				// Bild zusammenbauen
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+				{
+					ifs.seekg(fileoff);
+					ifs.read(&RAWBandImgbuff[i * linesize], linesize);
+					fileoff = fileoff + jump;
+				};
+			ifs.close();
+			// Bild umbauen
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+				{
+					unsigned long long rawoff = (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&BandImgbuff[bandoff], &RAWBandImgbuff[rawoff], this->SpecHeader.pixelsize);
+				};
+			};
+			delete[] RAWBandImgbuff;
+			return 0;
+		};
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long bandsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			char* RAWBandImgbuff = new char[bandsize];
+			unsigned long long startpos = (unsigned long long)this->SpecHeader.headsize + (unsigned long long)z * bandsize;
+			ifs.seekg(startpos);
+			ifs.read(RAWBandImgbuff, bandsize);
+			ifs.close();
+			// Bild umsortieren auf vereinbartes Standardformat
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++) //y
+			{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++) //x
+				{
+					unsigned long long rawoff = (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&BandImgbuff[bandoff], &RAWBandImgbuff[rawoff], this->SpecHeader.pixelsize);
+				};
+			};
+			delete[] RAWBandImgbuff;
+			return 0;
+		};
+		// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++)
+			{
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)
+				{
+					unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + ((unsigned long long)z + (i + j * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1])* this->SpecHeader.pixelsize;
+					unsigned long long bandoff = (j + i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					ifs.seekg(fileoff);
+					ifs.read(&BandImgbuff[bandoff], this->SpecHeader.pixelsize);
+				};
+			};
+			ifs.close();
+			return 0;
+		};
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_RAW_Frame(): Invalid Parameter(s) !");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Frame_NCWF(void* plane, int x, int y, int z)
+{
+	char* FrameImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long frameoff = 0;
+			unsigned long long cubeoff = 0;
+			unsigned long long framestart = 0;
+			for (int j = 0; j < this->SpecHeader.imgsize[1]; j++)
+			{
+				framestart = ((unsigned long long)y + (unsigned long long)j * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+				for (int i = 0; i < this->SpecHeader.imgsize[0]; i++)
+				{
+					cubeoff = framestart + ((unsigned long long)i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&FrameImgbuff[frameoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+					frameoff = frameoff + this->SpecHeader.pixelsize;
+				};
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Frame(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Frame(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Daten auf HDD
+	// oder von/auf HDD arbeiten?
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+
+			unsigned long long frameoff = 0;
+			unsigned long long fileoff = 0;
+			unsigned long long framestart = 0;
+			for (int j = 0; j < this->SpecHeader.imgsize[1]; j++)
+			{
+				framestart = ((unsigned long long)y + (unsigned long long)j * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+				for (int i = 0; i < this->SpecHeader.imgsize[0]; i++)
+				{
+					fileoff = framestart + ((unsigned long long)i * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					ifs.seekg(fileoff);
+					ifs.read(&FrameImgbuff[frameoff], this->SpecHeader.pixelsize);
+					frameoff = frameoff + this->SpecHeader.pixelsize;
+				};
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Frame(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Frame(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Frame(): Invalid parameters!");
+	return -1;
+};
+//
+int SpecIL_Base::getPlane_Sample_NCWF(void* plane, int x, int y, int z)
+{
+	char* SampleImgbuff = static_cast<char*>(plane);
+	// Daten vollstaendig im Speicher
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long samplestart = 0;
+			unsigned long long cubeoff = 0;
+			unsigned long long sampleoff = 0;
+			for (int i = 0; i < this->SpecHeader.imgsize[2]; i++) // y
+			{
+				samplestart = (i + (unsigned long long)x * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+				for (int j = 0; j < this->SpecHeader.imgsize[1]; j++) // z
+				{
+					cubeoff = samplestart + ((unsigned long long)j * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+					std::memmove(&SampleImgbuff[sampleoff], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+					sampleoff = sampleoff + this->SpecHeader.pixelsize;
+				};
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			// Err
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Sample(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Sample(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Daten auf HDD
+	// oder von/auf HDD arbeiten?
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		// band sequential
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long samplestart = 0;
+			unsigned long long fileoff = 0;
+			unsigned long long sampleoff = 0;
+
+
+			for (int i = 0; i < this->SpecHeader.imgsize[2]; i++) // y
+			{
+				samplestart = (i + (unsigned long long)x * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+
+				for (int j = 0; j < this->SpecHeader.imgsize[1]; j++) // z
+				{
+					fileoff = samplestart + ((unsigned long long)j * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+					ifs.seekg(fileoff);
+					ifs.read(&SampleImgbuff[sampleoff], this->SpecHeader.pixelsize);
+					sampleoff = sampleoff + this->SpecHeader.pixelsize;
+				};
+			};
+			return 0;
+		};
+		// band interleaved by line
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			// Err
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Sample(): band interleaved by line is not supported!");
+			return -1;
+		};
+		// band interleaved by pixel
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Sample(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::getPlane_NCWF_Sample(): Invalid parameters!");
+	return -1;
+};
+//
+int SpecIL_Base::getVector(void* vector, int x, int y, int z)
+{
+	// x - Vektor
+	if(x < 0 && y < this->SpecHeader.imgsize[2] && z < this->SpecHeader.imgsize[1])
+	{
+		this->getVector_X(vector, y, z);
+		return 0;
+	};
+	// y - Vektor
+	if(x < this->SpecHeader.imgsize[0] && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		this->getVector_Y(vector, x, z);
+		return 0;
+	};
+	// z - Vektor
+	if(x < this->SpecHeader.imgsize[0] && y < this->SpecHeader.imgsize[2] && z < 0)
+	{
+		this->getVector_Z(vector, x, y);
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector(): invalid parameters x, y, z, interleave or type");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_X(void* vector, int y, int z)
+{
+	char* xVecbuff = static_cast< char* >(vector);
+	if(this->SpecHeader.type == 1)
+	{
+		unsigned long long cubeoff;
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			cubeoff = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * ( (unsigned long long)z + this->SpecHeader.imgsize[1] * (unsigned long long)y );
+			std::memmove(xVecbuff, &Cubebuff[cubeoff], this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0]);
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			cubeoff = (((unsigned long long)z * this->SpecHeader.imgsize[2] + (unsigned long long)y) * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+			std::memmove(xVecbuff, &Cubebuff[cubeoff], this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0]);
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			cubeoff = ((unsigned long long)z + (unsigned long long)y * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+			unsigned long long jump = this->SpecHeader.imgsize[1] * this->SpecHeader.pixelsize;
+			for(unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)
+			{
+				std::memmove(&xVecbuff[this->SpecHeader.pixelsize * i], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+				cubeoff = cubeoff + jump;
+			};
+		};
+		return 0;
+	};
+
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * ( (unsigned long long)z + this->SpecHeader.imgsize[1] * (unsigned long long)y );
+			ifs.seekg(fileoff);
+			ifs.read(xVecbuff, this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0]);
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + (((unsigned long long)z * this->SpecHeader.imgsize[2] + (unsigned long long)y) * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+			ifs.seekg(fileoff);
+			ifs.read(xVecbuff, this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0]);
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + ((unsigned long long)z + (unsigned long long)y * this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+			unsigned long long jump = this->SpecHeader.imgsize[1] * this->SpecHeader.pixelsize;
+			for(unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)
+			{
+				ifs.seekg(fileoff);
+				ifs.read(&xVecbuff[this->SpecHeader.pixelsize * i], this->SpecHeader.pixelsize);
+				fileoff = fileoff + jump;
+			};
+		};
+		ifs.close();
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_X(): invalid parameters x, y, z, interleave or type");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_Y(void* vector, int x, int z)
+{
+	char* yVecbuff = static_cast< char* >(vector);
+	unsigned long long jump;
+
+	if(this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		unsigned long long cubeoff;
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			cubeoff = this->SpecHeader.pixelsize * (this->SpecHeader.imgsize[0] * (unsigned long long)z + (unsigned long long)x);
+			jump = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1];
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			cubeoff = (this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * (unsigned long long)z + (unsigned long long)x) * this->SpecHeader.pixelsize;
+			jump =  this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			cubeoff = (this->SpecHeader.imgsize[1] * (unsigned long long)x + (unsigned long long)z) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.pixelsize;
+		};
+		for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+		{
+			std::memmove(&yVecbuff[i * this->SpecHeader.pixelsize], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+			cubeoff = cubeoff + jump;
+		};
+		return 0;
+	};
+
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.pixelsize * (this->SpecHeader.imgsize[0] * (unsigned long long)z + (unsigned long long)x);
+			jump = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1];
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + (this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * (unsigned long long)z + (unsigned long long)x) * this->SpecHeader.pixelsize;
+			jump =  this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + (this->SpecHeader.imgsize[1] * (unsigned long long)x + (unsigned long long)z) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * this->SpecHeader.pixelsize;
+		};
+		for(unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+		{
+			ifs.seekg(fileoff);
+			ifs.read(&yVecbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+			fileoff = fileoff + jump;
+		};
+		ifs.close();
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_Y(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_Z(void* vector, int x, int y)
+{
+	char* zVecbuff = static_cast< char* >(vector);
+	unsigned long long jump;
+	if(this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		unsigned long long cubeoff;
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			cubeoff = ( this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * (unsigned long long)y + (unsigned long long)x ) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			cubeoff = ( this->SpecHeader.imgsize[0] * (unsigned long long)y + (unsigned long long)x ) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			cubeoff = ( (unsigned long long)x * this->SpecHeader.imgsize[1] + (unsigned long long)y * this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1]) * this->SpecHeader.pixelsize;
+			//jump = this->SpecHeader.pixelsize; // langsamere variante... daher raus
+			std::memmove(zVecbuff, &Cubebuff[cubeoff], this->SpecHeader.imgsize[1] * this->SpecHeader.pixelsize);
+			return 0;			
+		};
+		for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+		{
+			std::memmove(&zVecbuff[i * this->SpecHeader.pixelsize], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+			cubeoff = cubeoff + jump;
+		};
+		return 0;
+	};
+	if(this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs( this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + ( this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * (unsigned long long)y + (unsigned long long)x ) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + ( this->SpecHeader.imgsize[0] * (unsigned long long)y + (unsigned long long)x ) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+		};
+		if(this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			fileoff = (unsigned long long)this->SpecHeader.headsize + ( this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[1] * (unsigned long long)y + (unsigned long long)x ) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.pixelsize;
+		};
+		for(unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+		{
+			ifs.seekg(fileoff);
+			ifs.read(&zVecbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+			fileoff = fileoff + jump;
+		};
+		ifs.close();
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_Z(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_NX(void* vector, int y, int z)
+{
+	char* xVecbuff = static_cast< char* >(vector);
+	if (this->SpecHeader.type == 1)
+	{
+		unsigned long long cubeoff;
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			for (unsigned long long i = 0; i <this->SpecHeader.imgsize[0]; i++)
+			{
+				unsigned long long cubeoff = (((unsigned long long)z * this->SpecHeader.imgsize[0] + i) * this->SpecHeader.imgsize[2] + (unsigned long long)y) * this->SpecHeader.pixelsize;
+				std::memmove(&xVecbuff[i*this->SpecHeader.pixelsize], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+			};
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NX(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NX(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[0]; i++)
+			{
+				fileoff = (((unsigned long long)z * this->SpecHeader.imgsize[0] + i) * this->SpecHeader.imgsize[2] + (unsigned long long)y) * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+				ifs.seekg(fileoff);
+				ifs.read(&xVecbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+			};
+			ifs.close();
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NX(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NX(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_NX(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_NY(void* vector, int x, int z)
+{
+	char* yVecbuff = static_cast< char* >(vector);
+
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		unsigned long long cubeoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long cubeoff = ((unsigned long long)x + (unsigned long long)z * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			std::memmove(yVecbuff, &Cubebuff[cubeoff], this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize);
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NY(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NY(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			fileoff = ((unsigned long long)x + (unsigned long long)z * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+			ifs.seekg(fileoff);
+			ifs.read(yVecbuff, this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize);
+			ifs.close();
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NY(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NY(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_NY(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getVector_NZ(void* vector, int x, int y)
+{
+	char* zVecbuff = static_cast< char* >(vector);
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		unsigned long long cubeoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			for (unsigned long long i = 0; i <this->SpecHeader.imgsize[1]; i++)
+			{
+				unsigned long long cubeoff = ((unsigned long long)y + ((unsigned long long)x + i * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+				std::memmove(&zVecbuff[i*this->SpecHeader.pixelsize], &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+			};
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NZ(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NZ(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			for (unsigned long long i = 0; i <this->SpecHeader.imgsize[1]; i++)
+			{
+				fileoff = ((unsigned long long)y + ((unsigned long long)x + i * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+				ifs.seekg(fileoff);
+				ifs.read(&zVecbuff[i*this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+			};
+			ifs.close();
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NZ(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getVector_NZ(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getVector_NZ(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getPoint(void* point, int x, int y, int z)
+{
+	// Zu den Profilen: Fuer die HySpex Daten ist das Profil egal, nur fuer die Nuance Vertauschung nicht....
+	unsigned long long offset;
+	char* Point = static_cast< char* >(point);
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+	{
+		offset = (this->SpecHeader.imgsize[0] * (this->SpecHeader.imgsize[1] * (unsigned long long)y + (unsigned long long)z) + (unsigned long long)x) * this->SpecHeader.pixelsize;
+	};
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		offset = ((unsigned long long)x + ((unsigned long long)y + (unsigned long long)z * this->SpecHeader.imgsize[2]) * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+	};
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+	{
+		offset = ((unsigned long long)z + ((unsigned long long)x + (unsigned long long)y * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[1])* this->SpecHeader.pixelsize;
+	};
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		std::memmove(Point, &Cubebuff[offset], this->SpecHeader.pixelsize);
+		return 0;
+	};
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		ifs.seekg(offset + (unsigned long long)this->SpecHeader.headsize);
+		ifs.read(Point, this->SpecHeader.pixelsize);
+		ifs.close();
+		return 0;
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getPoint(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::getPoint_N(void* point, int x, int y, int z)
+{
+	char* Pointbuff = static_cast< char* >(point);
+	if (this->SpecHeader.type == 1)
+	{
+		char* Cubebuff = static_cast<char*>(this->SpecHeader.imgcube);
+		unsigned long long cubeoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			unsigned long long cubeoff = ((unsigned long long)y + ((unsigned long long)x + (unsigned long long)z * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize;
+			std::memmove(Pointbuff, &Cubebuff[cubeoff], this->SpecHeader.pixelsize);
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPoint_N(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			this->ErrorMsgLog("In SpecIL_Base::getPoint_N(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	if (this->SpecHeader.type == 2)
+	{
+		std::ifstream ifs(this->SpecHeader.filename, std::fstream::binary);
+		unsigned long long fileoff;
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+		{
+			fileoff = ((unsigned long long)y + ((unsigned long long)x + (unsigned long long)z * this->SpecHeader.imgsize[0]) * this->SpecHeader.imgsize[2]) * this->SpecHeader.pixelsize + this->SpecHeader.headsize;
+			ifs.seekg(fileoff);
+			ifs.read(Pointbuff, this->SpecHeader.pixelsize);
+			ifs.close();
+			return 0;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getPoint_N(): band interleaved by line is not supported!");
+			return -1;
+		};
+		if (this->SpecHeader.interleave == t_SpecHead::IL_BIP)
+		{
+			ifs.close();
+			this->ErrorMsgLog("In SpecIL_Base::getPoint_N(): band interleaved by pixel is not supported!");
+			return -1;
+		};
+	};
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::getPoint_N(): invalid parameter");
+	return -1;
+};
+//
+void SpecIL_Base::setDataType(t_SpecHead::t_data_type dt)
+{
+	this->SpecHeader.data_type = dt;
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE)
+	{
+		this->SpecHeader.pixelsize = 1;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_SINT || this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+	{
+		this->SpecHeader.pixelsize = 2;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG || this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT || this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+	{
+		this->SpecHeader.pixelsize = 4;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_DOUBLE || this->SpecHeader.data_type == t_SpecHead::DT_2x32_COMPLEX || this->SpecHeader.data_type == t_SpecHead::DT_64_SLONG || this->SpecHeader.data_type == t_SpecHead::DT_64_ULONG)
+	{
+		this->SpecHeader.pixelsize = 8;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_2x64_COMPLEX)
+	{
+		this->SpecHeader.pixelsize = 16;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_UNKNOWN)
+	{
+		this->SpecHeader.pixelsize = 0;
+	};
+
+	this->setDataTypeMaxMin();
+};
+//
+void SpecIL_Base::setImageSize(unsigned int width, unsigned int height, unsigned int planes)
+{
+	this->SpecHeader.imgsize[0] = width;
+	this->SpecHeader.imgsize[1] = planes;
+	this->SpecHeader.imgsize[2] = height;
+};
+//
+void SpecIL_Base::close()
+{
+	this->~SpecIL_Base();
+};
+//
+int SpecIL_Base::write()
+{
+	// als tgd schreiben implementieren
+	// hier dann auch die meta datei schreiben aufrufen!
+
+
+
+	// Daten in die Zieldatei schreiben
+	if (this->writeDataToHySpexFile(this->SpecHeader.filename) == 0)
+	{
+		// .hdr Datei schreiben
+		std::string outhdrfile = this->SpecHeader.filename.substr(0, this->SpecHeader.filename.find_last_of("."));
+		outhdrfile = outhdrfile + ".hdr";
+		this->writeENVIhdr(outhdrfile);
+
+		// temp datei loeschen
+		std::remove(this->tempOutFileName.c_str());
+		return 0;
+	}
+	this->ErrorMsgLog("In SpecIL_Base::write():");
+	return -1;
+};
+//
+int SpecIL_Base::setPlane(void* plane, int x, int y, int z)
+{
+	if (this->SpecHeader.data_type == t_SpecHead::t_data_type::DT_UNKNOWN)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Base::setPlane(): SpecHeader.data_type == DT_UNKNOWN -> use setDataType");
+		return -1;
+	};
+
+	if (this->NewFileData == 0)
+	{
+		this->initNewFileCube();
+	};
+
+	// Ein Band setzen
+	if (x < 0 && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		this->setPlane_Band(plane, z);
+
+		return 0;
+	};
+
+	// Ein Frame setzen
+	if (x < 0 && z < 0 && y < this->SpecHeader.imgsize[2])
+	{
+		this->setPlane_Frame(plane,y);
+
+		return 0;
+	};
+
+	// Ein Samplebild setzen
+	if (y < 0 && z < 0 && x < this->SpecHeader.imgsize[0])
+	{
+		this->setPlane_Sample(plane, x);
+		return 0;
+	};
+
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::setPlane(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setPlane_Band(void* plane, int z)
+{
+	char* buffer = static_cast<char*>(plane);
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);//geht
+
+		if (fsOut.fail() == false)
+		{
+			unsigned long long bandsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+			
+			long pos = fsOut.tellp();
+			std::streampos fsPos = this->SpecHeader.headsize + bandsize * (unsigned long long)z;
+			fsOut.seekp(fsPos, std::ios_base::beg);		
+			fsOut.write(buffer, bandsize);
+			fsOut.close();
+			return 0;
+		};
+		fsOut.close();
+	};
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+		if (fsOut.fail() == false)
+		{
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * (unsigned long long)z;
+
+			// Zeilegroessegroesse
+			unsigned long long linesize = this->SpecHeader.pixelsize * this->SpecHeader.imgsize[0];
+			// Sprungweite zur naechsten Zeile
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize * this->SpecHeader.imgsize[1];
+			// Bild zusammenbauen
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+			{
+				fsOut.seekp(fileoff, std::ios_base::beg);
+				fsOut.write(&buffer[i * linesize], linesize);
+				fileoff = fileoff + jump;
+			};
+
+			return 0;
+		};
+		fsOut.close();
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::setPlane_Band(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::initNewFile()
+{
+	// Header ist in der temporaeren Datei immer 8Byte
+	this->SpecHeader.headsize = 8;
+
+	this->SpecHeader.interleave = t_SpecHead::IL_BSQ;//vorerst BSQ
+
+	this->NewFileData = 0;
+	std::ofstream ofFile;
+	ofFile.open(this->tempOutFileName.c_str(), std::ios_base::trunc | std::ios_base::binary);
+	if (ofFile.fail() == false)
+	{
+		char buffer8[8] = { 'S', 'P', 'E', 'C', 'I', 'L', 0x00, 0x00 };
+		ofFile.write(buffer8, 8);
+		return 0;
+	}
+	ofFile.close();
+	this->ErrorMsgLog("In SpecIL_Base::initNewFile(): invalid parameters");
+	return -1;
+};
+//
+void SpecIL_Base::setFileMode(unsigned int fm)
+{
+	this->FileMode = fm;
+	if (fm == 1)
+	{
+		this->tempOutFileName = this->SpecHeader.filename + ".temp";
+	};
+};
+//
+int SpecIL_Base::initNewFileCube()
+{
+	std::ofstream ofFile;
+
+	ofFile.open(this->tempOutFileName.c_str(), std::ofstream::binary | std::ofstream::app);
+
+	if (ofFile.fail() == false)
+	{
+		ofFile.seekp(std::ios_base::end);
+		unsigned long long bandsize = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+
+		char* buffer = new char[bandsize];
+
+		for (unsigned long long z = 0; z < this->SpecHeader.imgsize[1]; z++)
+		{
+			ofFile.write(buffer, bandsize);
+		};
+
+		ofFile.close();
+		delete[] buffer;
+		buffer = NULL;
+		this->NewFileData = 1;
+		return 0;
+	}
+	ofFile.close();
+	this->ErrorMsgLog("In SpecIL_Base::initNewFileCube(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setVector(void* vector, int x, int y, int z)
+{
+	if (this->SpecHeader.data_type == t_SpecHead::t_data_type::DT_UNKNOWN)
+	{
+		// Err
+		this->ErrorMsgLog("In SpecIL_Base::setPlane(): SpecHeader.data_type == DT_UNKNOWN -> use setDataType");
+		return -1;
+	};
+
+	if (this->NewFileData == 0)
+	{
+		this->initNewFileCube();
+	};
+
+	// x vector
+	if (x < 0 && y < this->SpecHeader.imgsize[2] && z < this->SpecHeader.imgsize[1])
+	{
+		this->setVector_X(vector, y, z);
+		return 0;
+	};
+
+	// y - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < 0 && z < this->SpecHeader.imgsize[1])
+	{
+		this->setVector_Y(vector, x, z);
+		return 0;
+	};
+
+	// z - Vektor
+	if (x < this->SpecHeader.imgsize[0] && y < this->SpecHeader.imgsize[2] && z < 0)
+	{
+		this->setVector_Z(vector, x, y);
+		return 0;
+	};
+
+	this->ErrorMsgLog("In SpecIL_Base::setVector(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setVector_X(void* vector, int y, int z)
+{
+	unsigned long long fileoff;
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+		if (fsOut.fail() == false)
+		{
+			char* buffer = static_cast<char*>(vector);
+
+			unsigned long long vecsize = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+
+			fileoff = this->SpecHeader.headsize + (((unsigned long long)z * this->SpecHeader.imgsize[2] + (unsigned long long)y) * this->SpecHeader.imgsize[0])* this->SpecHeader.pixelsize;
+
+			fsOut.seekp(fileoff);
+			fsOut.write(buffer, vecsize);
+
+			fsOut.close();
+			return 0;
+		};
+		fsOut.close();
+	};
+
+	this->ErrorMsgLog("In SpecIL_Base::getVector_X(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setVector_Y(void* vector, int x, int z)
+{
+	char* yVecbuff = static_cast< char* >(vector);
+
+	unsigned long long fileoff;
+	unsigned long long jump;
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+		if (fsOut.fail() == false)
+		{
+			fileoff = this->SpecHeader.headsize + (this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * (unsigned long long)z + (unsigned long long)x) * this->SpecHeader.pixelsize;
+			jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[2]; i++)
+			{	
+				fsOut.seekp(fileoff);
+				fsOut.write(&yVecbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+				fileoff = fileoff + jump;
+			};
+
+			fsOut.close();
+			return 0;
+		};
+		fsOut.close();
+	};
+
+	this->ErrorMsgLog("In SpecIL_Base::getVector_Y(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setVector_Z(void* vector, int x, int y)
+{
+	char* zVecbuff = static_cast< char* >(vector);
+	unsigned long long jump;
+	unsigned long long fileoff;
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+
+		fileoff = this->SpecHeader.headsize + (this->SpecHeader.imgsize[0] * (unsigned long long)y + (unsigned long long)x) * this->SpecHeader.pixelsize;
+		jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+
+		for (unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+		{
+			fsOut.seekp(fileoff);
+			fsOut.write(&zVecbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+			fileoff = fileoff + jump;
+		};
+
+		fsOut.close();
+		return 0;
+	};
+
+	this->ErrorMsgLog("In SpecIL_Base::setVector_Z(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setPoint(void* point, int x, int y, int z)
+{
+	unsigned long long fileoff;
+	unsigned long long jump;
+
+	char* Point = static_cast< char* >(point);
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		fileoff = this->SpecHeader.headsize + ((unsigned long long)x + ((unsigned long long)y + (unsigned long long)z * this->SpecHeader.imgsize[2]) * this->SpecHeader.imgsize[0]) * this->SpecHeader.pixelsize;
+		
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+
+		fsOut.seekp(fileoff);
+		fsOut.write(Point, this->SpecHeader.pixelsize);
+
+		fsOut.close();
+		return 0;
+	};
+
+	//Err
+	this->ErrorMsgLog("In SpecIL_Base::setPoint(): invalid parameter");
+	return -1;
+};
+//
+int SpecIL_Base::setPlane_Frame(void* plane, int y)
+{
+	char* FrameImgbuff = static_cast<char*>(plane);
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+
+		if (fsOut.fail() == false)
+		{
+			unsigned long long frameRowSize = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.imgsize[2] * this->SpecHeader.pixelsize;
+
+			unsigned long long fileoff = this->SpecHeader.headsize + (unsigned long long)y * frameRowSize;
+
+			for (unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++) //z
+			{
+				fsOut.seekp(fileoff);
+
+				fsOut.write(&FrameImgbuff[frameRowSize*i], frameRowSize);
+
+				fileoff = fileoff + jump;
+			};
+
+			fsOut.close();
+			return 0;
+		};
+		fsOut.close();
+	};
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+	{
+		// to do...
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::setPlane_Frame(): invalid parameters");
+	return -1;
+};
+//
+int SpecIL_Base::setPlane_Sample(void* plane, int x)
+{
+	char* SampleImgbuff = static_cast<char*>(plane);
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BSQ)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+
+		if (fsOut.fail() == false)
+		{
+			unsigned long long sampleoff = 0;
+			unsigned long long frameRowjump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long bandjump = this->SpecHeader.imgsize[2] * frameRowjump;
+
+			unsigned long long startfileoff = this->SpecHeader.headsize + (unsigned long long)x * this->SpecHeader.pixelsize;
+			
+			for (unsigned long long j = 0; j < this->SpecHeader.imgsize[2]; j++)
+			{
+				unsigned long long fileoff = startfileoff + j * frameRowjump;
+
+				for (unsigned long long i = 0; i < this->SpecHeader.imgsize[1]; i++)
+				{
+					fsOut.seekp(fileoff);
+					fsOut.write(&SampleImgbuff[sampleoff], this->SpecHeader.pixelsize);
+					sampleoff = sampleoff + this->SpecHeader.pixelsize;
+					fileoff = fileoff + bandjump;
+				};
+			};
+
+			fsOut.close();
+			return 0;
+		};
+		fsOut.close();
+	};
+
+	if (this->SpecHeader.interleave == t_SpecHead::IL_BIL)
+	{
+		std::fstream fsOut;
+		fsOut.open(this->tempOutFileName.c_str(), std::fstream::in | std::fstream::out | std::fstream::binary);
+
+		if (fsOut.fail() == false)
+		{
+			unsigned long long fileoff = (unsigned long long)this->SpecHeader.headsize + ((unsigned long long)x * this->SpecHeader.pixelsize);
+			unsigned long long jump = this->SpecHeader.imgsize[0] * this->SpecHeader.pixelsize;
+			unsigned long long max = this->SpecHeader.imgsize[1] * this->SpecHeader.imgsize[2];
+			for (unsigned long long i = 0; i < max; i++)
+			{
+				fsOut.seekp(fileoff);
+
+				fsOut.write(&SampleImgbuff[i * this->SpecHeader.pixelsize], this->SpecHeader.pixelsize);
+				fileoff = fileoff + jump;
+			};
+			fsOut.close();
+			return 0;
+
+		};
+		fsOut.close();
+	};
+	// Err
+	this->ErrorMsgLog("In SpecIL_Base::setPlane_Sample(): invalid parameters");
+	return -1;
+};
+//
+void SpecIL_Base::setInterleave(t_SpecHead::t_interleave il)
+{
+	this->SpecHeader.interleave = il;
+};
+//
+int SpecIL_Base::getOpenCVDatatype()
+{
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_SLONG ||
+		this->SpecHeader.data_type == t_SpecHead::DT_64_ULONG ||
+		this->SpecHeader.data_type == t_SpecHead::DT_2x32_COMPLEX ||
+		this->SpecHeader.data_type == t_SpecHead::DT_2x64_COMPLEX
+		)
+	{
+		this->ErrorMsgLog("In SpecIL_Base::getOpenCVDatatype(): This datatyp is not supported");
+		return -1;
+	};
+
+	// TGD Daten sind immer 4Byte gross
+	std::string endung = this->SpecHeader.filename.substr(this->SpecHeader.filename.find_last_of("."));
+	if (0 == endung.compare(".tgd"))
+	{
+		if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE ||
+			this->SpecHeader.data_type == t_SpecHead::DT_16_SINT ||
+			this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG)
+		{
+			return 4; // CV_32S;
+		};
+
+		if (this->SpecHeader.data_type == t_SpecHead::DT_16_UINT ||
+			this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+		{
+			//		return CV_32U; // gibt es nicht in OpenCV!
+			//		this->ErrorMsgLog("In SpecIL_Base::getOpenCVDatatype(): This datatyp is not supported");
+			//		return -1;
+			return 4; // CV_32S;
+		};
+
+		if (this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT)
+		{
+			return 5; // CV_32F;
+		};
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE)
+	{
+		return 0; // CV_8U;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_SINT)
+	{
+		return 3; // CV_16S;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+	{
+		return 2; // CV_16U;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG)
+	{
+		return 4; // CV_32S;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+	{
+		//		return CV_32U; // gibt es nicht in OpenCV!
+		//		this->ErrorMsgLog("In SpecIL_Base::getOpenCVDatatype(): This datatyp is not supported");
+		//		return -1;
+		return 4; // CV_32S;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT)
+	{
+		return 5; // CV_32F;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_DOUBLE)
+	{
+		return 6; // CV_64F;
+	};
+};
+//
+void SpecIL_Base::setCubeMaxSize(unsigned int cms)
+{
+	this->cubemaxsize = cms;
+};
+//
+void SpecIL_Base::setHeadersize(unsigned int hs)
+{
+	this->SpecHeader.headsize = hs;
+};
+//
+void SpecIL_Base::EnableErrorLog()
+{
+	this->UsingErrorLog = true;
+};
+//
+void SpecIL_Base::DisableErrorLog()
+{
+	this->UsingErrorLog = false;
+};
+//
+void SpecIL_Base::setDataTypeMaxMin()
+{
+	if (this->SpecHeader.data_type == t_SpecHead::DT_8_BYTE)
+	{
+		this->SpecHeader.data_type_maxval = 255.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_SINT)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 15) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 15);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_16_UINT)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 16) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_SLONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 31) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 31);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_FLOAT || this->SpecHeader.data_type == t_SpecHead::DT_2x32_COMPLEX)
+	{
+		this->SpecHeader.data_type_maxval = FLT_MAX;
+		this->SpecHeader.data_type_minval = FLT_MIN;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_32_ULONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 32) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_DOUBLE || this->SpecHeader.data_type == t_SpecHead::DT_2x64_COMPLEX)
+	{
+		this->SpecHeader.data_type_maxval = DBL_MAX;
+		this->SpecHeader.data_type_minval = DBL_MIN;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_SLONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 63) - 1.0;
+		this->SpecHeader.data_type_minval = pow(2, 63);
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_64_ULONG)
+	{
+		this->SpecHeader.data_type_maxval = pow(2, 64) - 1.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+
+	if (this->SpecHeader.data_type == t_SpecHead::DT_UNKNOWN)
+	{
+		this->SpecHeader.data_type_maxval = 0.0;
+		this->SpecHeader.data_type_minval = 0.0;
+	};
+};

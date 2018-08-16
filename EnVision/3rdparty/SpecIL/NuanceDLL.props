@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NUANCEDLL>$(IFFLIBRARYPATH)\nuance\bin\x86</NUANCEDLL>
+    <PATH>$(NUANCEDLL)%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NUANCEDLL>$(IFFLIBRARYPATH)\nuance\bin\x86</NUANCEDLL>
+    <PATH>$(NUANCEDLL)%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <NUANCEDLL>$(IFFLIBRARYPATH)\nuance\</NUANCEDLL>
+    <PATH>$(NUANCEDLL)%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NUANCEDLL>$(IFFLIBRARYPATH)\nuance\</NUANCEDLL>
+    <PATH>$(NUANCEDLL)%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(IFFLIBRARYPATH)\nuance\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(IFFLIBRARYPATH)\nuance\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(IFFLIBRARYPATH)\nuance\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(IFFLIBRARYPATH)\nuance\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(IFFLIBRARYPATH)\nuance\include\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(IFFLIBRARYPATH)\nuance\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Git\EnVision\EnVision\EnVision\3rdparty\Nuance\x64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\Git\EnVision\EnVision\EnVision\3rdparty\Nuance\x64\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

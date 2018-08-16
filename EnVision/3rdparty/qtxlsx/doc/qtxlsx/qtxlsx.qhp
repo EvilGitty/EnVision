@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>me.debao.qtxlsx.030</namespace>
+    <virtualFolder>qtxlsx</virtualFolder>
+    <customFilter name="QtXlsx 0.3.0">
+        <filterAttribute>qtxlsx</filterAttribute>
+        <filterAttribute>0.3.0</filterAttribute>
+    </customFilter>
+    <filterSection>
+        <filterAttribute>qtxlsx</filterAttribute>
+        <filterAttribute>0.3.0</filterAttribute>
+        <filterAttribute>qtrefdoc</filterAttribute>
+        <toc>
+            <section ref="index.html" title="Qt Xlsx">
+                <section ref="qtxlsx-module.html" title="C++ Classes">
+                    <section ref="abstractsheet.html" title="AbstractSheet Class Reference">
+                        <section ref="abstractsheet-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="cell.html" title="Cell Class Reference">
+                        <section ref="cell-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="cellformula.html" title="CellFormula Class Reference">
+                        <section ref="cellformula-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="chart.html" title="Chart Class Reference">
+                        <section ref="chart-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="chartsheet.html" title="Chartsheet Class Reference">
+                        <section ref="chartsheet-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="conditionalformatting.html" title="ConditionalFormatting Class Reference">
+                        <section ref="conditionalformatting-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="datavalidation.html" title="DataValidation Class Reference">
+                        <section ref="datavalidation-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="document.html" title="Document Class Reference">
+                        <section ref="document-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="format.html" title="Format Class Reference">
+                        <section ref="format-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="richstring.html" title="RichString Class Reference">
+                        <section ref="richstring-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="worksheet.html" title="Worksheet Class Reference">
+                        <section ref="worksheet-members.html" title="List of all members"/>
+                    </section>
+                </section>
+                <section ref="qtxlsx-examples.html" title="Examples">
+                    <section ref="qtxlsx-mergecells-example.html" title="Merge Cells Example"/>
+                    <section ref="qtxlsx-richtext-example.html" title="Rich Text Example"/>
+                    <section ref="qtxlsx-extractdata-example.html" title="Extract Data Example"/>
+                    <section ref="qtxlsx-documentproperty-example.html" title="Document Properties Example"/>
+                    <section ref="qtxlsx-formulas-example.html" title="Formulas Example"/>
+                    <section ref="qtxlsx-style-example.html" title="Xlsx Style Example"/>
+                    <section ref="qtxlsx-conditionalformatting-example.html" title="Conditional Formatting Example"/>
+                    <section ref="qtxlsx-hello-example.html" title="Hello QtXlsx Example"/>
+                    <section ref="qtxlsx-demo-example.html" title="Qt Xlsx Demo"/>
+                    <section ref="qtxlsx-worksheetoperations-example.html" title="Worksheet Operations Example"/>
+                </section>
+                <section ref="index.html" title="Overview">
+                    <section ref="index.html" title="Qt Xlsx"/>
+                    <section ref="building.html" title="Qt Xlsx Build"/>
+                </section>
+                <section ref="" title="">
+                    <section ref="qtxlsx-mergecells-mergecells-pro.html" title="mergecells.pro Example File"/>
+                    <section ref="qtxlsx-worksheetoperations-worksheetoperations-pro.html" title="worksheetoperations.pro Example File"/>
+                    <section ref="qtxlsx-style-main-cpp.html" title="main.cpp Example File"/>
+                    <section ref="chart.html" title="Chart Class Reference">
+                        <section ref="chart-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-style-style-pro.html" title="style.pro Example File"/>
+                    <section ref="qtxlsx-conditionalformatting-conditionalformatting-pro.html" title="conditionalformatting.pro Example File"/>
+                    <section ref="richstring.html" title="RichString Class Reference">
+                        <section ref="richstring-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-demo-example.html" title="Qt Xlsx Demo"/>
+                    <section ref="cell.html" title="Cell Class Reference">
+                        <section ref="cell-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-module.html" title="Qt Xlsx C++ Classes"/>
+                    <section ref="qtxlsx-demo-demo-pro.html" title="demo.pro Example File"/>
+                    <section ref="qtxlsx-examples.html" title="Qt Xlsx Examples"/>
+                    <section ref="conditionalformatting.html" title="ConditionalFormatting Class Reference">
+                        <section ref="conditionalformatting-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="building.html" title="Qt Xlsx Build"/>
+                    <section ref="qtxlsx-formulas-example.html" title="Formulas Example"/>
+                    <section ref="qtxlsx-style-example.html" title="Xlsx Style Example"/>
+                    <section ref="worksheet.html" title="Worksheet Class Reference">
+                        <section ref="worksheet-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-formulas-formulas-pro.html" title="formulas.pro Example File"/>
+                    <section ref="datavalidation.html" title="DataValidation Class Reference">
+                        <section ref="datavalidation-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-richtext-richtext-pro.html" title="richtext.pro Example File"/>
+                    <section ref="qtxlsx-richtext-example.html" title="Rich Text Example"/>
+                    <section ref="document.html" title="Document Class Reference">
+                        <section ref="document-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-extractdata-extractdata-pro.html" title="extractdata.pro Example File"/>
+                    <section ref="qtxlsx-worksheetoperations-example.html" title="Worksheet Operations Example"/>
+                    <section ref="qtxlsx-documentproperty-documentproperty-pro.html" title="documentproperty.pro Example File"/>
+                    <section ref="qtxlsx-conditionalformatting-example.html" title="Conditional Formatting Example"/>
+                    <section ref="index.html" title="Qt Xlsx"/>
+                    <section ref="format.html" title="Format Class Reference">
+                        <section ref="format-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="cellformula.html" title="CellFormula Class Reference">
+                        <section ref="cellformula-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-hello-example.html" title="Hello QtXlsx Example"/>
+                    <section ref="qtxlsx-documentproperty-example.html" title="Document Properties Example"/>
+                    <section ref="chartsheet.html" title="Chartsheet Class Reference">
+                        <section ref="chartsheet-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qtxlsx-mergecells-example.html" title="Merge Cells Example"/>
+                    <section ref="qtxlsx-hello-hello-pro.html" title="hello.pro Example File"/>
+                    <section ref="qtxlsx-extractdata-example.html" title="Extract Data Example"/>
+                    <section ref="abstractsheet.html" title="AbstractSheet Class Reference">
+                        <section ref="abstractsheet-members.html" title="List of all members"/>
+                    </section>
+                </section>
+            </section>
+        </toc>
+        <keywords>
+            <keyword name="AbstractSheet" id="AbstractSheet" ref="abstractsheet.html"/>
+            <keyword name="AbstractSheet::SheetState" id="AbstractSheet::SheetState" ref="abstractsheet.html#SheetState-enum"/>
+            <keyword name="AbstractSheet::SS_Visible" id="AbstractSheet::SS_Visible" ref="abstractsheet.html#SheetState-enum"/>
+            <keyword name="AbstractSheet::SS_Hidden" id="AbstractSheet::SS_Hidden" ref="abstractsheet.html#SheetState-enum"/>
+            <keyword name="AbstractSheet::SS_VeryHidden" id="AbstractSheet::SS_VeryHidden" ref="abstractsheet.html#SheetState-enum"/>
+            <keyword name="AbstractSheet::SheetType" id="AbstractSheet::SheetType" ref="abstractsheet.html#SheetType-enum"/>
+            <keyword name="AbstractSheet::ST_WorkSheet" id="AbstractSheet::ST_WorkSheet" ref="abstractsheet.html#SheetType-enum"/>
+            <keyword name="AbstractSheet::ST_ChartSheet" id="AbstractSheet::ST_ChartSheet" ref="abstractsheet.html#SheetType-enum"/>
+            <keyword name="copy" id="AbstractSheet::copy" ref="abstractsheet.html#copy"/>
+            <keyword name="isHidden" id="AbstractSheet::isHidden" ref="abstractsheet.html#isHidden"/>
+            <keyword name="isVisible" id="AbstractSheet::isVisible" ref="abstractsheet.html#isVisible"/>
+            <keyword name="setHidden" id="AbstractSheet::setHidden" ref="abstractsheet.html#setHidden"/>
+            <keyword name="setSheetState" id="AbstractSheet::setSheetState" ref="abstractsheet.html#setSheetState"/>
+            <keyword name="setVisible" id="AbstractSheet::setVisible" ref="abstractsheet.html#setVisible"/>
+            <keyword name="sheetName" id="AbstractSheet::sheetName" ref="abstractsheet.html#sheetName"/>
+            <keyword name="sheetState" id="AbstractSheet::sheetState" ref="abstractsheet.html#sheetState"/>
+            <keyword name="sheetType" id="AbstractSheet::sheetType" ref="abstractsheet.html#sheetType"/>
+            <keyword name="workbook" id="AbstractSheet::workbook" ref="abstractsheet.html#workbook"/>
+            <keyword name="Cell" id="Cell" ref="cell.html"/>
+            <keyword name="Cell::CellType" id="Cell::CellType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::BooleanType" id="Cell::BooleanType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::NumberType" id="Cell::NumberType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::ErrorType" id="Cell::ErrorType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::SharedStringType" id="Cell::SharedStringType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::StringType" id="Cell::StringType" ref="cell.html#CellType-enum"/>
+            <keyword name="Cell::InlineStringType" id="Cell::InlineStringType" ref="cell.html#CellType-enum"/>
+            <keyword name="cellType" id="Cell::cellType" ref="cell.html#cellType"/>
+            <keyword name="dateTime" id="Cell::dateTime" ref="cell.html#dateTime"/>
+            <keyword name="format" id="Cell::format" ref="cell.html#format"/>
+            <keyword name="formula" id="Cell::formula" ref="cell.html#formula"/>
+            <keyword name="hasFormula" id="Cell::hasFormula" ref="cell.html#hasFormula"/>
+            <keyword name="isDateTime" id="Cell::isDateTime" ref="cell.html#isDateTime"/>
+            <keyword name="isRichString" id="Cell::isRichString" ref="cell.html#isRichString"/>
+            <keyword name="value" id="Cell::value" ref="cell.html#value"/>
+            <keyword name="~Cell" id="Cell::~Cell" ref="cell.html#dtor.Cell"/>
+            <keyword name="CellFormula" id="CellFormula" ref="cellformula.html"/>
+            <keyword name="CellFormula::FormulaType" id="CellFormula::FormulaType" ref="cellformula.html#FormulaType-enum"/>
+            <keyword name="CellFormula::NormalType" id="CellFormula::NormalType" ref="cellformula.html#FormulaType-enum"/>
+            <keyword name="CellFormula::ArrayType" id="CellFormula::ArrayType" ref="cellformula.html#FormulaType-enum"/>
+            <keyword name="CellFormula::DataTableType" id="CellFormula::DataTableType" ref="cellformula.html#FormulaType-enum"/>
+            <keyword name="CellFormula::SharedType" id="CellFormula::SharedType" ref="cellformula.html#FormulaType-enum"/>
+            <keyword name="formulaText" id="CellFormula::formulaText" ref="cellformula.html#formulaText"/>
+            <keyword name="formulaType" id="CellFormula::formulaType" ref="cellformula.html#formulaType"/>
+            <keyword name="isValid" id="CellFormula::isValid" ref="cellformula.html#isValid"/>
+            <keyword name="operator=" id="CellFormula::operator=" ref="cellformula.html#operator-eq"/>
+            <keyword name="reference" id="CellFormula::reference" ref="cellformula.html#reference"/>
+            <keyword name="sharedIndex" id="CellFormula::sharedIndex" ref="cellformula.html#sharedIndex"/>
+            <keyword name="~CellFormula" id="CellFormula::~CellFormula" ref="cellformula.html#dtor.CellFormula"/>
+            <keyword name="Chart" id="Chart" ref="chart.html"/>
+            <keyword name="Chart::ChartType" id="Chart::ChartType" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Area" id="Chart::CT_Area" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Area3D" id="Chart::CT_Area3D" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Line" id="Chart::CT_Line" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Line3D" id="Chart::CT_Line3D" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Scatter" id="Chart::CT_Scatter" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Pie" id="Chart::CT_Pie" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Pie3D" id="Chart::CT_Pie3D" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Doughnut" id="Chart::CT_Doughnut" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Bar" id="Chart::CT_Bar" ref="chart.html#ChartType-enum"/>
+            <keyword name="Chart::CT_Bar3D" id="Chart::CT_Bar3D" ref="chart.html#ChartType-enum"/>
+            <keyword name="addSeries" id="Chart::addSeries" ref="chart.html#addSeries"/>
+            <keyword name="setChartType" id="Chart::setChartType" ref="chart.html#setChartType"/>
+            <keyword name="~Chart" id="Chart::~Chart" ref="chart.html#dtor.Chart"/>
+            <keyword name="Chartsheet" id="Chartsheet" ref="chartsheet.html"/>
+            <keyword name="chart" id="Chartsheet::chart" ref="chartsheet.html#chart"/>
+            <keyword name="~Chartsheet" id="Chartsheet::~Chartsheet" ref="chartsheet.html#dtor.Chartsheet"/>
+            <keyword name="Conditional Formatting Example" id="Conditional Formatting Example" ref="qtxlsx-conditionalformatting-example.html"/>
+            <keyword name="ConditionalFormatting" id="ConditionalFormatting" ref="conditionalformatting.html"/>
+            <keyword name="ConditionalFormatting::HighlightRuleType" id="ConditionalFormatting::HighlightRuleType" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_LessThan" id="ConditionalFormatting::Highlight_LessThan" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_LessThanOrEqual" id="ConditionalFormatting::Highlight_LessThanOrEqual" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Equal" id="ConditionalFormatting::Highlight_Equal" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_NotEqual" id="ConditionalFormatting::Highlight_NotEqual" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_GreaterThanOrEqual" id="ConditionalFormatting::Highlight_GreaterThanOrEqual" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_GreaterThan" id="ConditionalFormatting::Highlight_GreaterThan" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Between" id="ConditionalFormatting::Highlight_Between" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_NotBetween" id="ConditionalFormatting::Highlight_NotBetween" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_ContainsText" id="ConditionalFormatting::Highlight_ContainsText" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_NotContainsText" id="ConditionalFormatting::Highlight_NotContainsText" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BeginsWith" id="ConditionalFormatting::Highlight_BeginsWith" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_EndsWith" id="ConditionalFormatting::Highlight_EndsWith" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_TimePeriod" id="ConditionalFormatting::Highlight_TimePeriod" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Duplicate" id="ConditionalFormatting::Highlight_Duplicate" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Unique" id="ConditionalFormatting::Highlight_Unique" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Blanks" id="ConditionalFormatting::Highlight_Blanks" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_NoBlanks" id="ConditionalFormatting::Highlight_NoBlanks" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Errors" id="ConditionalFormatting::Highlight_Errors" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_NoErrors" id="ConditionalFormatting::Highlight_NoErrors" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Top" id="ConditionalFormatting::Highlight_Top" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_TopPercent" id="ConditionalFormatting::Highlight_TopPercent" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Bottom" id="ConditionalFormatting::Highlight_Bottom" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BottomPercent" id="ConditionalFormatting::Highlight_BottomPercent" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_AboveAverage" id="ConditionalFormatting::Highlight_AboveAverage" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_AboveOrEqualAverage" id="ConditionalFormatting::Highlight_AboveOrEqualAverage" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_AboveStdDev1" id="ConditionalFormatting::Highlight_AboveStdDev1" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_AboveStdDev2" id="ConditionalFormatting::Highlight_AboveStdDev2" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_AboveStdDev3" id="ConditionalFormatting::Highlight_AboveStdDev3" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BelowAverage" id="ConditionalFormatting::Highlight_BelowAverage" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BelowOrEqualAverage" id="ConditionalFormatting::Highlight_BelowOrEqualAverage" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BelowStdDev1" id="ConditionalFormatting::Highlight_BelowStdDev1" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BelowStdDev2" id="ConditionalFormatting::Highlight_BelowStdDev2" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_BelowStdDev3" id="ConditionalFormatting::Highlight_BelowStdDev3" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::Highlight_Expression" id="ConditionalFormatting::Highlight_Expression" ref="conditionalformatting.html#HighlightRuleType-enum"/>
+            <keyword name="ConditionalFormatting::ValueObjectType" id="ConditionalFormatting::ValueObjectType" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Formula" id="ConditionalFormatting::VOT_Formula" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Max" id="ConditionalFormatting::VOT_Max" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Min" id="ConditionalFormatting::VOT_Min" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Num" id="ConditionalFormatting::VOT_Num" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Percent" id="ConditionalFormatting::VOT_Percent" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="ConditionalFormatting::VOT_Percentile" id="ConditionalFormatting::VOT_Percentile" ref="conditionalformatting.html#ValueObjectType-enum"/>
+            <keyword name="add2ColorScaleRule" id="ConditionalFormatting::add2ColorScaleRule" ref="conditionalformatting.html#add2ColorScaleRule"/>
+            <keyword name="add3ColorScaleRule" id="ConditionalFormatting::add3ColorScaleRule" ref="conditionalformatting.html#add3ColorScaleRule"/>
+            <keyword name="addCell" id="ConditionalFormatting::addCell" ref="conditionalformatting.html#addCell"/>
+            <keyword name="addDataBarRule" id="ConditionalFormatting::addDataBarRule" ref="conditionalformatting.html#addDataBarRule"/>
+            <keyword name="addHighlightCellsRule" id="ConditionalFormatting::addHighlightCellsRule" ref="conditionalformatting.html#addHighlightCellsRule"/>
+            <keyword name="addRange" id="ConditionalFormatting::addRange" ref="conditionalformatting.html#addRange"/>
+            <keyword name="operator=" id="ConditionalFormatting::operator=" ref="conditionalformatting.html#operator-eq"/>
+            <keyword name="ranges" id="ConditionalFormatting::ranges" ref="conditionalformatting.html#ranges"/>
+            <keyword name="~ConditionalFormatting" id="ConditionalFormatting::~ConditionalFormatting" ref="conditionalformatting.html#dtor.ConditionalFormatting"/>
+            <keyword name="DataValidation" id="DataValidation" ref="datavalidation.html"/>
+            <keyword name="DataValidation::ErrorStyle" id="DataValidation::ErrorStyle" ref="datavalidation.html#ErrorStyle-enum"/>
+            <keyword name="DataValidation::Stop" id="DataValidation::Stop" ref="datavalidation.html#ErrorStyle-enum"/>
+            <keyword name="DataValidation::Warning" id="DataValidation::Warning" ref="datavalidation.html#ErrorStyle-enum"/>
+            <keyword name="DataValidation::Information" id="DataValidation::Information" ref="datavalidation.html#ErrorStyle-enum"/>
+            <keyword name="DataValidation::ValidationOperator" id="DataValidation::ValidationOperator" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::Between" id="DataValidation::Between" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::NotBetween" id="DataValidation::NotBetween" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::Equal" id="DataValidation::Equal" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::NotEqual" id="DataValidation::NotEqual" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::LessThan" id="DataValidation::LessThan" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::LessThanOrEqual" id="DataValidation::LessThanOrEqual" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::GreaterThan" id="DataValidation::GreaterThan" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::GreaterThanOrEqual" id="DataValidation::GreaterThanOrEqual" ref="datavalidation.html#ValidationOperator-enum"/>
+            <keyword name="DataValidation::ValidationType" id="DataValidation::ValidationType" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::None" id="DataValidation::None" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::Whole" id="DataValidation::Whole" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::Decimal" id="DataValidation::Decimal" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::List" id="DataValidation::List" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::Date" id="DataValidation::Date" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::Time" id="DataValidation::Time" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::TextLength" id="DataValidation::TextLength" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="DataValidation::Custom" id="DataValidation::Custom" ref="datavalidation.html#ValidationType-enum"/>
+            <keyword name="addCell" id="DataValidation::addCell" ref="datavalidation.html#addCell"/>
+            <keyword name="addRange" id="DataValidation::addRange" ref="datavalidation.html#addRange"/>
+            <keyword name="allowBlank" id="DataValidation::allowBlank" ref="datavalidation.html#allowBlank"/>
+            <keyword name="errorMessage" id="DataValidation::errorMessage" ref="datavalidation.html#errorMessage"/>
+            <keyword name="errorMessageTitle" id="DataValidation::errorMessageTitle" ref="datavalidation.html#errorMessageTitle"/>
+            <keyword name="errorStyle" id="DataValidation::errorStyle" ref="datavalidation.html#errorStyle"/>
+            <keyword name="formula1" id="DataValidation::formula1" ref="datavalidation.html#formula1"/>
+            <keyword name="formula2" id="DataValidation::formula2" ref="datavalidation.html#formula2"/>
+            <keyword name="isErrorMessageVisible" id="DataValidation::isErrorMessageVisible" ref="datavalidation.html#isErrorMessageVisible"/>
+            <keyword name="isPromptMessageVisible" id="DataValidation::isPromptMessageVisible" ref="datavalidation.html#isPromptMessageVisible"/>
+            <keyword name="operator=" id="DataValidation::operator=" ref="datavalidation.html#operator-eq"/>
+            <keyword name="promptMessage" id="DataValidation::promptMessage" ref="datavalidation.html#promptMessage"/>
+            <keyword name="promptMessageTitle" id="DataValidation::promptMessageTitle" ref="datavalidation.html#promptMessageTitle"/>
+            <keyword name="ranges" id="DataValidation::ranges" ref="datavalidation.html#ranges"/>
+            <keyword name="setAllowBlank" id="DataValidation::setAllowBlank" ref="datavalidation.html#setAllowBlank"/>
+            <keyword name="setErrorMessage" id="DataValidation::setErrorMessage" ref="datavalidation.html#setErrorMessage"/>
+            <keyword name="setErrorMessageVisible" id="DataValidation::setErrorMessageVisible" ref="datavalidation.html#setErrorMessageVisible"/>
+            <keyword name="setErrorStyle" id="DataValidation::setErrorStyle" ref="datavalidation.html#setErrorStyle"/>
+            <keyword name="setFormula1" id="DataValidation::setFormula1" ref="datavalidation.html#setFormula1"/>
+            <keyword name="setFormula2" id="DataValidation::setFormula2" ref="datavalidation.html#setFormula2"/>
+            <keyword name="setPromptMessage" id="DataValidation::setPromptMessage" ref="datavalidation.html#setPromptMessage"/>
+            <keyword name="setPromptMessageVisible" id="DataValidation::setPromptMessageVisible" ref="datavalidation.html#setPromptMessageVisible"/>
+            <keyword name="setValidationOperator" id="DataValidation::setValidationOperator" ref="datavalidation.html#setValidationOperator"/>
+            <keyword name="setValidationType" id="DataValidation::setValidationType" ref="datavalidation.html#setValidationType"/>
+            <keyword name="validationOperator" id="DataValidation::validationOperator" ref="datavalidation.html#validationOperator"/>
+            <keyword name="validationType" id="DataValidation::validationType" ref="datavalidation.html#validationType"/>
+            <keyword name="~DataValidation" id="DataValidation::~DataValidation" ref="datavalidation.html#dtor.DataValidation"/>
+            <keyword name="Document" id="Document" ref="document.html"/>
+            <keyword name="addConditionalFormatting" id="Document::addConditionalFormatting" ref="document.html#addConditionalFormatting"/>
+            <keyword name="addDataValidation" id="Document::addDataValidation" ref="document.html#addDataValidation"/>
+            <keyword name="addSheet" id="Document::addSheet" ref="document.html#addSheet"/>
+            <keyword name="cellAt" id="Document::cellAt" ref="document.html#cellAt"/>
+            <keyword name="columnFormat" id="Document::columnFormat" ref="document.html#columnFormat"/>
+            <keyword name="columnWidth" id="Document::columnWidth" ref="document.html#columnWidth"/>
+            <keyword name="copySheet" id="Document::copySheet" ref="document.html#copySheet"/>
+            <keyword name="currentSheet" id="Document::currentSheet" ref="document.html#currentSheet"/>
+            <keyword name="currentWorksheet" id="Document::currentWorksheet" ref="document.html#currentWorksheet"/>
+            <keyword name="defineName" id="Document::defineName" ref="document.html#defineName"/>
+            <keyword name="deleteSheet" id="Document::deleteSheet" ref="document.html#deleteSheet"/>
+            <keyword name="dimension" id="Document::dimension" ref="document.html#dimension"/>
+            <keyword name="documentProperty" id="Document::documentProperty" ref="document.html#documentProperty"/>
+            <keyword name="documentPropertyNames" id="Document::documentPropertyNames" ref="document.html#documentPropertyNames"/>
+            <keyword name="groupColumns" id="Document::groupColumns" ref="document.html#groupColumns"/>
+            <keyword name="groupRows" id="Document::groupRows" ref="document.html#groupRows"/>
+            <keyword name="insertChart" id="Document::insertChart" ref="document.html#insertChart"/>
+            <keyword name="insertImage" id="Document::insertImage" ref="document.html#insertImage"/>
+            <keyword name="insertSheet" id="Document::insertSheet" ref="document.html#insertSheet"/>
+            <keyword name="isColumnHidden" id="Document::isColumnHidden" ref="document.html#isColumnHidden"/>
+            <keyword name="isRowHidden" id="Document::isRowHidden" ref="document.html#isRowHidden"/>
+            <keyword name="mergeCells" id="Document::mergeCells" ref="document.html#mergeCells"/>
+            <keyword name="moveSheet" id="Document::moveSheet" ref="document.html#moveSheet"/>
+            <keyword name="read" id="Document::read" ref="document.html#read"/>
+            <keyword name="renameSheet" id="Document::renameSheet" ref="document.html#renameSheet"/>
+            <keyword name="rowFormat" id="Document::rowFormat" ref="document.html#rowFormat"/>
+            <keyword name="rowHeight" id="Document::rowHeight" ref="document.html#rowHeight"/>
+            <keyword name="save" id="Document::save" ref="document.html#save"/>
+            <keyword name="saveAs" id="Document::saveAs" ref="document.html#saveAs"/>
+            <keyword name="selectSheet" id="Document::selectSheet" ref="document.html#selectSheet"/>
+            <keyword name="setColumnFormat" id="Document::setColumnFormat" ref="document.html#setColumnFormat"/>
+            <keyword name="setColumnHidden" id="Document::setColumnHidden" ref="document.html#setColumnHidden"/>
+            <keyword name="setColumnWidth" id="Document::setColumnWidth" ref="document.html#setColumnWidth"/>
+            <keyword name="setDocumentProperty" id="Document::setDocumentProperty" ref="document.html#setDocumentProperty"/>
+            <keyword name="setRowFormat" id="Document::setRowFormat" ref="document.html#setRowFormat"/>
+            <keyword name="setRowHeight" id="Document::setRowHeight" ref="document.html#setRowHeight"/>
+            <keyword name="setRowHidden" id="Document::setRowHidden" ref="document.html#setRowHidden"/>
+            <keyword name="sheet" id="Document::sheet" ref="document.html#sheet"/>
+            <keyword name="sheetNames" id="Document::sheetNames" ref="document.html#sheetNames"/>
+            <keyword name="unmergeCells" id="Document::unmergeCells" ref="document.html#unmergeCells"/>
+            <keyword name="workbook" id="Document::workbook" ref="document.html#workbook"/>
+            <keyword name="write" id="Document::write" ref="document.html#write"/>
+            <keyword name="~Document" id="Document::~Document" ref="document.html#dtor.Document"/>
+            <keyword name="Document Properties Example" id="Document Properties Example" ref="qtxlsx-documentproperty-example.html"/>
+            <keyword name="Extract Data Example" id="Extract Data Example" ref="qtxlsx-extractdata-example.html"/>
+            <keyword name="Format" id="Format" ref="format.html"/>
+            <keyword name="Format::BorderStyle" id="Format::BorderStyle" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderNone" id="Format::BorderNone" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderThin" id="Format::BorderThin" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderMedium" id="Format::BorderMedium" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderDashed" id="Format::BorderDashed" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderDotted" id="Format::BorderDotted" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderThick" id="Format::BorderThick" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderDouble" id="Format::BorderDouble" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderHair" id="Format::BorderHair" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderMediumDashed" id="Format::BorderMediumDashed" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderDashDot" id="Format::BorderDashDot" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderMediumDashDot" id="Format::BorderMediumDashDot" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderDashDotDot" id="Format::BorderDashDotDot" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderMediumDashDotDot" id="Format::BorderMediumDashDotDot" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::BorderSlantDashDot" id="Format::BorderSlantDashDot" ref="format.html#BorderStyle-enum"/>
+            <keyword name="Format::DiagonalBorderType" id="Format::DiagonalBorderType" ref="format.html#DiagonalBorderType-enum"/>
+            <keyword name="Format::DiagonalBorderNone" id="Format::DiagonalBorderNone" ref="format.html#DiagonalBorderType-enum"/>
+            <keyword name="Format::DiagonalBorderDown" id="Format::DiagonalBorderDown" ref="format.html#DiagonalBorderType-enum"/>
+            <keyword name="Format::DiagonalBorderUp" id="Format::DiagonalBorderUp" ref="format.html#DiagonalBorderType-enum"/>
+            <keyword name="Format::DiagnoalBorderBoth" id="Format::DiagnoalBorderBoth" ref="format.html#DiagonalBorderType-enum"/>
+            <keyword name="Format::FillPattern" id="Format::FillPattern" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternNone" id="Format::PatternNone" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternSolid" id="Format::PatternSolid" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternMediumGray" id="Format::PatternMediumGray" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkGray" id="Format::PatternDarkGray" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightGray" id="Format::PatternLightGray" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkHorizontal" id="Format::PatternDarkHorizontal" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkVertical" id="Format::PatternDarkVertical" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkDown" id="Format::PatternDarkDown" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkUp" id="Format::PatternDarkUp" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkGrid" id="Format::PatternDarkGrid" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternDarkTrellis" id="Format::PatternDarkTrellis" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightHorizontal" id="Format::PatternLightHorizontal" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightVertical" id="Format::PatternLightVertical" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightDown" id="Format::PatternLightDown" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightUp" id="Format::PatternLightUp" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightTrellis" id="Format::PatternLightTrellis" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternGray125" id="Format::PatternGray125" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternGray0625" id="Format::PatternGray0625" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::PatternLightGrid" id="Format::PatternLightGrid" ref="format.html#FillPattern-enum"/>
+            <keyword name="Format::FontScript" id="Format::FontScript" ref="format.html#FontScript-enum"/>
+            <keyword name="Format::FontScriptNormal" id="Format::FontScriptNormal" ref="format.html#FontScript-enum"/>
+            <keyword name="Format::FontScriptSuper" id="Format::FontScriptSuper" ref="format.html#FontScript-enum"/>
+            <keyword name="Format::FontScriptSub" id="Format::FontScriptSub" ref="format.html#FontScript-enum"/>
+            <keyword name="Format::FontUnderline" id="Format::FontUnderline" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::FontUnderlineNone" id="Format::FontUnderlineNone" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::FontUnderlineSingle" id="Format::FontUnderlineSingle" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::FontUnderlineDouble" id="Format::FontUnderlineDouble" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::FontUnderlineSingleAccounting" id="Format::FontUnderlineSingleAccounting" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::FontUnderlineDoubleAccounting" id="Format::FontUnderlineDoubleAccounting" ref="format.html#FontUnderline-enum"/>
+            <keyword name="Format::HorizontalAlignment" id="Format::HorizontalAlignment" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHGeneral" id="Format::AlignHGeneral" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignLeft" id="Format::AlignLeft" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHCenter" id="Format::AlignHCenter" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignRight" id="Format::AlignRight" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHFill" id="Format::AlignHFill" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHJustify" id="Format::AlignHJustify" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHMerge" id="Format::AlignHMerge" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::AlignHDistributed" id="Format::AlignHDistributed" ref="format.html#HorizontalAlignment-enum"/>
+            <keyword name="Format::VerticalAlignment" id="Format::VerticalAlignment" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="Format::AlignTop" id="Format::AlignTop" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="Format::AlignVCenter" id="Format::AlignVCenter" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="Format::AlignBottom" id="Format::AlignBottom" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="Format::AlignVJustify" id="Format::AlignVJustify" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="Format::AlignVDistributed" id="Format::AlignVDistributed" ref="format.html#VerticalAlignment-enum"/>
+            <keyword name="bottomBorderColor" id="Format::bottomBorderColor" ref="format.html#bottomBorderColor"/>
+            <keyword name="bottomBorderStyle" id="Format::bottomBorderStyle" ref="format.html#bottomBorderStyle"/>
+            <keyword name="diagonalBorderColor" id="Format::diagonalBorderColor" ref="format.html#diagonalBorderColor"/>
+            <keyword name="diagonalBorderStyle" id="Format::diagonalBorderStyle" ref="format.html#diagonalBorderStyle"/>
+            <keyword name="diagonalBorderType" id="Format::diagonalBorderType" ref="format.html#diagonalBorderType"/>
+            <keyword name="fillPattern" id="Format::fillPattern" ref="format.html#fillPattern"/>
+            <keyword name="font" id="Format::font" ref="format.html#font"/>
+            <keyword name="fontBold" id="Format::fontBold" ref="format.html#fontBold"/>
+            <keyword name="fontColor" id="Format::fontColor" ref="format.html#fontColor"/>
+            <keyword name="fontItalic" id="Format::fontItalic" ref="format.html#fontItalic"/>
+            <keyword name="fontName" id="Format::fontName" ref="format.html#fontName"/>
+            <keyword name="fontOutline" id="Format::fontOutline" ref="format.html#fontOutline"/>
+            <keyword name="fontScript" id="Format::fontScript" ref="format.html#fontScript"/>
+            <keyword name="fontSize" id="Format::fontSize" ref="format.html#fontSize"/>
+            <keyword name="fontStrikeOut" id="Format::fontStrikeOut" ref="format.html#fontStrikeOut"/>
+            <keyword name="fontUnderline" id="Format::fontUnderline" ref="format.html#fontUnderline"/>
+            <keyword name="hidden" id="Format::hidden" ref="format.html#hidden"/>
+            <keyword name="horizontalAlignment" id="Format::horizontalAlignment" ref="format.html#horizontalAlignment"/>
+            <keyword name="indent" id="Format::indent" ref="format.html#indent"/>
+            <keyword name="isDateTimeFormat" id="Format::isDateTimeFormat" ref="format.html#isDateTimeFormat"/>
+            <keyword name="isEmpty" id="Format::isEmpty" ref="format.html#isEmpty"/>
+            <keyword name="isValid" id="Format::isValid" ref="format.html#isValid"/>
+            <keyword name="leftBorderColor" id="Format::leftBorderColor" ref="format.html#leftBorderColor"/>
+            <keyword name="leftBorderStyle" id="Format::leftBorderStyle" ref="format.html#leftBorderStyle"/>
+            <keyword name="locked" id="Format::locked" ref="format.html#locked"/>
+            <keyword name="mergeFormat" id="Format::mergeFormat" ref="format.html#mergeFormat"/>
+            <keyword name="numberFormat" id="Format::numberFormat" ref="format.html#numberFormat"/>
+            <keyword name="numberFormatIndex" id="Format::numberFormatIndex" ref="format.html#numberFormatIndex"/>
+            <keyword name="operator!=" id="Format::operator!=" ref="format.html#operator-not-eq"/>
+            <keyword name="operator=" id="Format::operator=" ref="format.html#operator-eq"/>
+            <keyword name="operator==" id="Format::operator==" ref="format.html#operator-eq-eq"/>
+            <keyword name="patternBackgroundColor" id="Format::patternBackgroundColor" ref="format.html#patternBackgroundColor"/>
+            <keyword name="patternForegroundColor" id="Format::patternForegroundColor" ref="format.html#patternForegroundColor"/>
+            <keyword name="rightBorderColor" id="Format::rightBorderColor" ref="format.html#rightBorderColor"/>
+            <keyword name="rightBorderStyle" id="Format::rightBorderStyle" ref="format.html#rightBorderStyle"/>
+            <keyword name="rotation" id="Format::rotation" ref="format.html#rotation"/>
+            <keyword name="setBorderColor" id="Format::setBorderColor" ref="format.html#setBorderColor"/>
+            <keyword name="setBorderStyle" id="Format::setBorderStyle" ref="format.html#setBorderStyle"/>
+            <keyword name="setBottomBorderColor" id="Format::setBottomBorderColor" ref="format.html#setBottomBorderColor"/>
+            <keyword name="setBottomBorderStyle" id="Format::setBottomBorderStyle" ref="format.html#setBottomBorderStyle"/>
+            <keyword name="setDiagonalBorderColor" id="Format::setDiagonalBorderColor" ref="format.html#setDiagonalBorderColor"/>
+            <keyword name="setDiagonalBorderStyle" id="Format::setDiagonalBorderStyle" ref="format.html#setDiagonalBorderStyle"/>
+            <keyword name="setDiagonalBorderType" id="Format::setDiagonalBorderType" ref="format.html#setDiagonalBorderType"/>
+            <keyword name="setFillPattern" id="Format::setFillPattern" ref="format.html#setFillPattern"/>
+            <keyword name="setFont" id="Format::setFont" ref="format.html#setFont"/>
+            <keyword name="setFontBold" id="Format::setFontBold" ref="format.html#setFontBold"/>
+            <keyword name="setFontColor" id="Format::setFontColor" ref="format.html#setFontColor"/>
+            <keyword name="setFontItalic" id="Format::setFontItalic" ref="format.html#setFontItalic"/>
+            <keyword name="setFontName" id="Format::setFontName" ref="format.html#setFontName"/>
+            <keyword name="setFontOutline" id="Format::setFontOutline" ref="format.html#setFontOutline"/>
+            <keyword name="setFontScript" id="Format::setFontScript" ref="format.html#setFontScript"/>
+            <keyword name="setFontSize" id="Format::setFontSize" ref="format.html#setFontSize"/>
+            <keyword name="setFontStrikeOut" id="Format::setFontStrikeOut" ref="format.html#setFontStrikeOut"/>
+            <keyword name="setFontUnderline" id="Format::setFontUnderline" ref="format.html#setFontUnderline"/>
+            <keyword name="setHidden" id="Format::setHidden" ref="format.html#setHidden"/>
+            <keyword name="setHorizontalAlignment" id="Format::setHorizontalAlignment" ref="format.html#setHorizontalAlignment"/>
+            <keyword name="setIndent" id="Format::setIndent" ref="format.html#setIndent"/>
+            <keyword name="setLeftBorderColor" id="Format::setLeftBorderColor" ref="format.html#setLeftBorderColor"/>
+            <keyword name="setLeftBorderStyle" id="Format::setLeftBorderStyle" ref="format.html#setLeftBorderStyle"/>
+            <keyword name="setLocked" id="Format::setLocked" ref="format.html#setLocked"/>
+            <keyword name="setNumberFormat" id="Format::setNumberFormat" ref="format.html#setNumberFormat"/>
+            <keyword name="setNumberFormatIndex" id="Format::setNumberFormatIndex" ref="format.html#setNumberFormatIndex"/>
+            <keyword name="setPatternBackgroundColor" id="Format::setPatternBackgroundColor" ref="format.html#setPatternBackgroundColor"/>
+            <keyword name="setPatternForegroundColor" id="Format::setPatternForegroundColor" ref="format.html#setPatternForegroundColor"/>
+            <keyword name="setRightBorderColor" id="Format::setRightBorderColor" ref="format.html#setRightBorderColor"/>
+            <keyword name="setRightBorderStyle" id="Format::setRightBorderStyle" ref="format.html#setRightBorderStyle"/>
+            <keyword name="setRotation" id="Format::setRotation" ref="format.html#setRotation"/>
+            <keyword name="setShrinkToFit" id="Format::setShrinkToFit" ref="format.html#setShrinkToFit"/>
+            <keyword name="setTextWarp" id="Format::setTextWarp" ref="format.html#setTextWarp"/>
+            <keyword name="setTopBorderColor" id="Format::setTopBorderColor" ref="format.html#setTopBorderColor"/>
+            <keyword name="setTopBorderStyle" id="Format::setTopBorderStyle" ref="format.html#setTopBorderStyle"/>
+            <keyword name="setVerticalAlignment" id="Format::setVerticalAlignment" ref="format.html#setVerticalAlignment"/>
+            <keyword name="shrinkToFit" id="Format::shrinkToFit" ref="format.html#shrinkToFit"/>
+            <keyword name="textWrap" id="Format::textWrap" ref="format.html#textWrap"/>
+            <keyword name="topBorderColor" id="Format::topBorderColor" ref="format.html#topBorderColor"/>
+            <keyword name="topBorderStyle" id="Format::topBorderStyle" ref="format.html#topBorderStyle"/>
+            <keyword name="verticalAlignment" id="Format::verticalAlignment" ref="format.html#verticalAlignment"/>
+            <keyword name="~Format" id="Format::~Format" ref="format.html#dtor.Format"/>
+            <keyword name="Formulas Example" id="Formulas Example" ref="qtxlsx-formulas-example.html"/>
+            <keyword name="Hello QtXlsx Example" id="Hello QtXlsx Example" ref="qtxlsx-hello-example.html"/>
+            <keyword name="Merge Cells Example" id="Merge Cells Example" ref="qtxlsx-mergecells-example.html"/>
+            <keyword name="Qt Xlsx" id="Qt Xlsx" ref="index.html"/>
+            <keyword name="Qt Xlsx Build" id="Qt Xlsx Build" ref="building.html"/>
+            <keyword name="Qt Xlsx Demo" id="Qt Xlsx Demo" ref="qtxlsx-demo-example.html"/>
+            <keyword name="QtXlsx" id="QtXlsx" ref="qtxlsx-module.html"/>
+            <keyword name="Rich Text Example" id="Rich Text Example" ref="qtxlsx-richtext-example.html"/>
+            <keyword name="RichString" id="RichString" ref="richstring.html"/>
+            <keyword name="addFragment" id="RichString::addFragment" ref="richstring.html#addFragment"/>
+            <keyword name="fragmentCount" id="RichString::fragmentCount" ref="richstring.html#fragmentCount"/>
+            <keyword name="fragmentFormat" id="RichString::fragmentFormat" ref="richstring.html#fragmentFormat"/>
+            <keyword name="fragmentText" id="RichString::fragmentText" ref="richstring.html#fragmentText"/>
+            <keyword name="isEmtpy" id="RichString::isEmtpy" ref="richstring.html#isEmtpy"/>
+            <keyword name="isNull" id="RichString::isNull" ref="richstring.html#isNull"/>
+            <keyword name="isRichString" id="RichString::isRichString" ref="richstring.html#isRichString"/>
+            <keyword name="operator QVariant" id="RichString::operator QVariant" ref="richstring.html#operator-QVariant"/>
+            <keyword name="operator=" id="RichString::operator=" ref="richstring.html#operator-eq"/>
+            <keyword name="setHtml" id="RichString::setHtml" ref="richstring.html#setHtml"/>
+            <keyword name="toHtml" id="RichString::toHtml" ref="richstring.html#toHtml"/>
+            <keyword name="toPlainString" id="RichString::toPlainString" ref="richstring.html#toPlainString"/>
+            <keyword name="~RichString" id="RichString::~RichString" ref="richstring.html#dtor.RichString"/>
+            <keyword name="Worksheet" id="Worksheet" ref="worksheet.html"/>
+            <keyword name="addConditionalFormatting" id="Worksheet::addConditionalFormatting" ref="worksheet.html#addConditionalFormatting"/>
+            <keyword name="addDataValidation" id="Worksheet::addDataValidation" ref="worksheet.html#addDataValidation"/>
+            <keyword name="cellAt" id="Worksheet::cellAt" ref="worksheet.html#cellAt"/>
+            <keyword name="columnFormat" id="Worksheet::columnFormat" ref="worksheet.html#columnFormat"/>
+            <keyword name="columnWidth" id="Worksheet::columnWidth" ref="worksheet.html#columnWidth"/>
+            <keyword name="dimension" id="Worksheet::dimension" ref="worksheet.html#dimension"/>
+            <keyword name="groupColumns" id="Worksheet::groupColumns" ref="worksheet.html#groupColumns"/>
+            <keyword name="groupRows" id="Worksheet::groupRows" ref="worksheet.html#groupRows"/>
+            <keyword name="insertChart" id="Worksheet::insertChart" ref="worksheet.html#insertChart"/>
+            <keyword name="insertImage" id="Worksheet::insertImage" ref="worksheet.html#insertImage"/>
+            <keyword name="isColumnHidden" id="Worksheet::isColumnHidden" ref="worksheet.html#isColumnHidden"/>
+            <keyword name="isFormulasVisible" id="Worksheet::isFormulasVisible" ref="worksheet.html#isFormulasVisible"/>
+            <keyword name="isGridLinesVisible" id="Worksheet::isGridLinesVisible" ref="worksheet.html#isGridLinesVisible"/>
+            <keyword name="isOutlineSymbolsVisible" id="Worksheet::isOutlineSymbolsVisible" ref="worksheet.html#isOutlineSymbolsVisible"/>
+            <keyword name="isRightToLeft" id="Worksheet::isRightToLeft" ref="worksheet.html#isRightToLeft"/>
+            <keyword name="isRowColumnHeadersVisible" id="Worksheet::isRowColumnHeadersVisible" ref="worksheet.html#isRowColumnHeadersVisible"/>
+            <keyword name="isRowHidden" id="Worksheet::isRowHidden" ref="worksheet.html#isRowHidden"/>
+            <keyword name="isRulerVisible" id="Worksheet::isRulerVisible" ref="worksheet.html#isRulerVisible"/>
+            <keyword name="isSelected" id="Worksheet::isSelected" ref="worksheet.html#isSelected"/>
+            <keyword name="isWhiteSpaceVisible" id="Worksheet::isWhiteSpaceVisible" ref="worksheet.html#isWhiteSpaceVisible"/>
+            <keyword name="isWindowProtected" id="Worksheet::isWindowProtected" ref="worksheet.html#isWindowProtected"/>
+            <keyword name="isZerosVisible" id="Worksheet::isZerosVisible" ref="worksheet.html#isZerosVisible"/>
+            <keyword name="mergeCells" id="Worksheet::mergeCells" ref="worksheet.html#mergeCells"/>
+            <keyword name="mergedCells" id="Worksheet::mergedCells" ref="worksheet.html#mergedCells"/>
+            <keyword name="read" id="Worksheet::read" ref="worksheet.html#read"/>
+            <keyword name="rowFormat" id="Worksheet::rowFormat" ref="worksheet.html#rowFormat"/>
+            <keyword name="rowHeight" id="Worksheet::rowHeight" ref="worksheet.html#rowHeight"/>
+            <keyword name="setColumnFormat" id="Worksheet::setColumnFormat" ref="worksheet.html#setColumnFormat"/>
+            <keyword name="setColumnHidden" id="Worksheet::setColumnHidden" ref="worksheet.html#setColumnHidden"/>
+            <keyword name="setColumnWidth" id="Worksheet::setColumnWidth" ref="worksheet.html#setColumnWidth"/>
+            <keyword name="setFormulasVisible" id="Worksheet::setFormulasVisible" ref="worksheet.html#setFormulasVisible"/>
+            <keyword name="setGridLinesVisible" id="Worksheet::setGridLinesVisible" ref="worksheet.html#setGridLinesVisible"/>
+            <keyword name="setOutlineSymbolsVisible" id="Worksheet::setOutlineSymbolsVisible" ref="worksheet.html#setOutlineSymbolsVisible"/>
+            <keyword name="setRightToLeft" id="Worksheet::setRightToLeft" ref="worksheet.html#setRightToLeft"/>
+            <keyword name="setRowColumnHeadersVisible" id="Worksheet::setRowColumnHeadersVisible" ref="worksheet.html#setRowColumnHeadersVisible"/>
+            <keyword name="setRowFormat" id="Worksheet::setRowFormat" ref="worksheet.html#setRowFormat"/>
+            <keyword name="setRowHeight" id="Worksheet::setRowHeight" ref="worksheet.html#setRowHeight"/>
+            <keyword name="setRowHidden" id="Worksheet::setRowHidden" ref="worksheet.html#setRowHidden"/>
+            <keyword name="setRulerVisible" id="Worksheet::setRulerVisible" ref="worksheet.html#setRulerVisible"/>
+            <keyword name="setSelected" id="Worksheet::setSelected" ref="worksheet.html#setSelected"/>
+            <keyword name="setWhiteSpaceVisible" id="Worksheet::setWhiteSpaceVisible" ref="worksheet.html#setWhiteSpaceVisible"/>
+            <keyword name="setWindowProtected" id="Worksheet::setWindowProtected" ref="worksheet.html#setWindowProtected"/>
+            <keyword name="setZerosVisible" id="Worksheet::setZerosVisible" ref="worksheet.html#setZerosVisible"/>
+            <keyword name="unmergeCells" id="Worksheet::unmergeCells" ref="worksheet.html#unmergeCells"/>
+            <keyword name="write" id="Worksheet::write" ref="worksheet.html#write"/>
+            <keyword name="writeBlank" id="Worksheet::writeBlank" ref="worksheet.html#writeBlank"/>
+            <keyword name="writeBool" id="Worksheet::writeBool" ref="worksheet.html#writeBool"/>
+            <keyword name="writeDateTime" id="Worksheet::writeDateTime" ref="worksheet.html#writeDateTime"/>
+            <keyword name="writeFormula" id="Worksheet::writeFormula" ref="worksheet.html#writeFormula"/>
+            <keyword name="writeHyperlink" id="Worksheet::writeHyperlink" ref="worksheet.html#writeHyperlink"/>
+            <keyword name="writeInlineString" id="Worksheet::writeInlineString" ref="worksheet.html#writeInlineString"/>
+            <keyword name="writeNumeric" id="Worksheet::writeNumeric" ref="worksheet.html#writeNumeric"/>
+            <keyword name="writeString" id="Worksheet::writeString" ref="worksheet.html#writeString"/>
+            <keyword name="writeTime" id="Worksheet::writeTime" ref="worksheet.html#writeTime"/>
+            <keyword name="~Worksheet" id="Worksheet::~Worksheet" ref="worksheet.html#dtor.Worksheet"/>
+            <keyword name="Worksheet Operations Example" id="Worksheet Operations Example" ref="qtxlsx-worksheetoperations-example.html"/>
+            <keyword name="Xlsx Style Example" id="Xlsx Style Example" ref="qtxlsx-style-example.html"/>
+            <keyword name="operator!=" id="operator!=" ref=""/>
+            <keyword name="operator==" id="operator==" ref=""/>
+            <keyword name="qtxlsx-examples" id="qtxlsx-examples" ref="qtxlsx-examples.html"/>
+        </keywords>
+        <files>
+            <file>qtxlsx-style-example.html</file>
+            <file>format.html</file>
+            <file>cell-members.html</file>
+            <file>qtxlsx-documentproperty-example.html</file>
+            <file>qtxlsx-worksheetoperations-main-cpp.html</file>
+            <file>building.html</file>
+            <file>cellformula-members.html</file>
+            <file>qtxlsx-worksheetoperations-worksheetoperations-pro.html</file>
+            <file>qtxlsx-conditionalformatting-example.html</file>
+            <file>images/hello.png</file>
+            <file>qtxlsx-conditionalformatting-conditionalformatting-pro.html</file>
+            <file>qtxlsx-demo-example.html</file>
+            <file>document.html</file>
+            <file>index.html</file>
+            <file>images/xlsx-mergecells.png</file>
+            <file>abstractsheet-members.html</file>
+            <file>qtxlsx-formulas-main-cpp.html</file>
+            <file>richstring-members.html</file>
+            <file>cellformula.html</file>
+            <file>richstring.html</file>
+            <file>qtxlsx-documentproperty-main-cpp.html</file>
+            <file>conditionalformatting.html</file>
+            <file>qtxlsx-conditionalformatting-main-cpp.html</file>
+            <file>qtxlsx-demo-main-cpp.html</file>
+            <file>images/bgrContent.png</file>
+            <file>chart-members.html</file>
+            <file>images/home.png</file>
+            <file>qtxlsx-richtext-main-cpp.html</file>
+            <file>images/doc_property.png</file>
+            <file>qtxlsx-mergecells-mergecells-pro.html</file>
+            <file>chart.html</file>
+            <file>qtxlsx-formulas-formulas-pro.html</file>
+            <file>chartsheet.html</file>
+            <file>worksheet.html</file>
+            <file>qtxlsx-demo-demo-pro.html</file>
+            <file>images/arrow_bc.png</file>
+            <file>images/ico_note.png</file>
+            <file>chartsheet-members.html</file>
+            <file>qtxlsx-hello-hello-pro.html</file>
+            <file>qtxlsx-formulas-example.html</file>
+            <file>images/bullet_sq.png</file>
+            <file>cell.html</file>
+            <file>qtxlsx-worksheetoperations-example.html</file>
+            <file>qtxlsx-richtext-richtext-pro.html</file>
+            <file>qtxlsx-mergecells-example.html</file>
+            <file>abstractsheet.html</file>
+            <file>qtxlsx-style-main-cpp.html</file>
+            <file>qtxlsx-richtext-example.html</file>
+            <file>style/offline.css</file>
+            <file>qtxlsx-hello-main-cpp.html</file>
+            <file>format-members.html</file>
+            <file>document-members.html</file>
+            <file>worksheet-members.html</file>
+            <file>datavalidation-members.html</file>
+            <file>images/ico_out.png</file>
+            <file>images/btn_prev.png</file>
+            <file>qtxlsx-style-style-pro.html</file>
+            <file>qtxlsx-hello-example.html</file>
+            <file>images/bullet_dn.png</file>
+            <file>qtxlsx-extractdata-example.html</file>
+            <file>qtxlsx-extractdata-main-cpp.html</file>
+            <file>datavalidation.html</file>
+            <file>images/xlsx_demo.gif</file>
+            <file>qtxlsx-mergecells-main-cpp.html</file>
+            <file>images/ico_note_attention.png</file>
+            <file>qtxlsx-module.html</file>
+            <file>images/btn_next.png</file>
+            <file>conditionalformatting-members.html</file>
+            <file>qtxlsx-examples.html</file>
+            <file>qtxlsx-documentproperty-documentproperty-pro.html</file>
+            <file>images/richtext.png</file>
+            <file>qtxlsx-extractdata-extractdata-pro.html</file>
+            <file>images/logo.png</file>
+        </files>
+    </filterSection>
+</QtHelpProject>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <MATIOPATH>$(IFFLIBRARYPATH)\matio\1.5.9</MATIOPATH>
+    <PATH>$(MATIOPATH)\visual_studio\Debug%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <MATIOPATH>$(IFFLIBRARYPATH)\matio\1.5.9</MATIOPATH>
+    <PATH>$(MATIOPATH)\visual_studio\Release%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <MATIOPATH>$(IFFLIBRARYPATH)\matio\1.5.9</MATIOPATH>
+    <PATH>$(MATIOPATH)\visual_studio\x64\Debug%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <MATIOPATH>$(IFFLIBRARYPATH)\matio\1.5.9</MATIOPATH>
+    <PATH>$(MATIOPATH)\visual_studio\x64\Release%3b$(PATH)</PATH>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MATIOPATH)\src\;$(MATIOPATH)\visual_studio\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MATIOPATH)\visual_studio\Debug\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmatio.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MATIOPATH)\src\;$(MATIOPATH)\visual_studio\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MATIOPATH)\visual_studio\Release\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmatio.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MATIOPATH)\src\;$(MATIOPATH)\visual_studio\;%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(MATIOPATH)\visual_studio\x64\Debug\;%(AdditionalLibraryDirectories)
+			</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmatio.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\Treiberdatenbank\tapSANSi\VS2017\64Bit\002.Build\matio\1.5.9\src;D:\Treiberdatenbank\tapSANSi\VS2017\64Bit\002.Build\matio\1.5.9\visual_studio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\Treiberdatenbank\tapSANSi\VS2017\64Bit\002.Build\matio\1.5.9\visual_studio\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmatio.lib;%(AdditionalDependencies)
+			</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>
